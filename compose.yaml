@@ -1,9 +1,36 @@
+
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: postgres
+    ports:
+      - '5432:5432'
     environment:
       - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_USER=postgres'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d mydatabase" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  app:
+    build: .
+    container_name: app
     ports:
-      - '5432'
+      - '8000:8000'
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mydatabase'
+      - 'SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: diplomski-network
