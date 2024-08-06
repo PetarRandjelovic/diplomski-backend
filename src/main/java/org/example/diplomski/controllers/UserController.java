@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/delete/{email}", consumes = MediaType.ALL_VALUE)
-    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
     @Transactional
     public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
         try {

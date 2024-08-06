@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Long id) {
-        System.out.println("ID: " + id);
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found."));
         return userMapper.toDto(user);
     }
@@ -60,8 +59,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new MissingRoleException("USER"));
 
         user.setRole(role);
-          user.setPassword(passwordEncoder.encode(Thread.currentThread().getName() + new Random().nextLong() + Thread.activeCount()));
-    //    user.setPassword(passwordEncoder.encode("sifra"));
+        user.setPassword(passwordEncoder.encode(Thread.currentThread().getName() + new Random().nextLong() + Thread.activeCount()));
+        //    user.setPassword(passwordEncoder.encode("sifra"));
 
 
         User savedUser = userRepository.save(user);
@@ -83,12 +82,14 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " not found."));
 
-        userRepository.delete(user);
 
         if (SpringSecurityUtil.hasRoleRole("ROLE_ADMIN")) {
             return userRepository.removeUserByEmail(email);
         }
-        if (SpringSecurityUtil.hasRoleRole("ROLE_USER")) {
+        System.out.println(SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC"));
+
+        if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
+            System.out.println("SpringSecurityUtil.getPrincipalEmail(): " + SpringSecurityUtil.getPrincipalEmail() + " email: " + email);
             if (SpringSecurityUtil.getPrincipalEmail().equals(email)) {
                 return userRepository.removeUserByEmail(email);
             }
@@ -102,4 +103,5 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found."));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
+
 }

@@ -1,13 +1,9 @@
 package org.example.diplomski.bootstrap;
 
 import lombok.RequiredArgsConstructor;
-import org.example.diplomski.data.entites.Role;
-import org.example.diplomski.data.entites.User;
-import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.entites.*;
 import org.example.diplomski.data.enums.RoleType;
-import org.example.diplomski.repositories.RoleRepository;
-import org.example.diplomski.repositories.UserRelationshipRepository;
-import org.example.diplomski.repositories.UserRepository;
+import org.example.diplomski.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -23,6 +19,8 @@ public class BootstrapData implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRelationshipRepository userRelationshipRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public void run(String... args) {
         try {
@@ -31,11 +29,32 @@ public class BootstrapData implements CommandLineRunner {
             loadRoles();
             loadUsers();
             loadUserRelationships();
+            loadPosts();
+            loadComments();
 
 
             logger.info("USERService: DEV DATA LOADING FINISHED...");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadComments() {
+        if (commentRepository.count() == 0) {
+            Comment comment1 = new Comment();
+            comment1.setUser(userRepository.findByEmail("marko@gmail.com").get());
+            comment1.setContent("This is a comment from Marko");
+            comment1.setPost(postRepository.findById(1L).get());
+            commentRepository.save(comment1);
+        }
+    }
+
+    private void loadPosts() {
+        if (postRepository.count() == 0) {
+            Post post1 = new Post();
+            post1.setUser(userRepository.findByEmail("mirko@gmail.com").get());
+            post1.setContent("This is a post from Mirko");
+            postRepository.save(post1);
         }
     }
 
@@ -48,6 +67,14 @@ public class BootstrapData implements CommandLineRunner {
             Role role2 = new Role();
             role2.setRoleType(RoleType.USER);
             roleRepository.save(role2);
+
+            Role role3 = new Role();
+            role3.setRoleType(RoleType.PRIVATE);
+            roleRepository.save(role3);
+
+            Role role4 = new Role();
+            role4.setRoleType(RoleType.PUBLIC);
+            roleRepository.save(role4);
         }
 
     }
@@ -60,21 +87,21 @@ public class BootstrapData implements CommandLineRunner {
             user1.setEmail("petar@gmail.com");
             user1.setUsername("petar@gmail.com");
             user1.setPassword(passwordEncoder.encode("petar"));
-            user1.setRole(roleRepository.findByRoleType(RoleType.USER).get());
+            user1.setRole(roleRepository.findByRoleType(RoleType.ADMIN).get());
             userRepository.save(user1);
 
             User user2 = new User();
             user2.setEmail("marko@gmail.com");
             user2.setUsername("marko@gmail.com");
             user2.setPassword(passwordEncoder.encode("marko"));
-            user2.setRole(roleRepository.findByRoleType(RoleType.USER).get());
+            user2.setRole(roleRepository.findByRoleType(RoleType.PRIVATE).get());
             userRepository.save(user2);
 
             User user3 = new User();
             user3.setEmail("mirko@gmail.com");
             user3.setUsername("mirko@gmail.com");
             user3.setPassword(passwordEncoder.encode("mirko"));
-            user3.setRole(roleRepository.findByRoleType(RoleType.USER).get());
+            user3.setRole(roleRepository.findByRoleType(RoleType.PRIVATE).get());
             userRepository.save(user3);
         }
 
