@@ -10,6 +10,7 @@ import org.example.diplomski.repositories.RoleRepository;
 import org.example.diplomski.repositories.UserRepository;
 import org.example.diplomski.services.UserService;
 import org.example.diplomski.utils.SpringSecurityUtil;
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
 
+
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found."));
+        System.out.println("??????hahahahahah");
         return userMapper.toDto(user);
     }
 
@@ -59,7 +62,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new MissingRoleException("USER"));
 
         user.setRole(role);
-        user.setPassword(passwordEncoder.encode(Thread.currentThread().getName() + new Random().nextLong() + Thread.activeCount()));
+        user.setUsername(userDto.getEmail());
+     //   user.setPassword(passwordEncoder.encode(Thread.currentThread().getName() + new Random().nextLong() + Thread.activeCount()));
         //    user.setPassword(passwordEncoder.encode("sifra"));
 
 
@@ -79,17 +83,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer deleteUserByEmail(String email) {
-
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " not found."));
-
-
         if (SpringSecurityUtil.hasRoleRole("ROLE_ADMIN")) {
             return userRepository.removeUserByEmail(email);
         }
         System.out.println(SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC"));
 
         if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
-            System.out.println("SpringSecurityUtil.getPrincipalEmail(): " + SpringSecurityUtil.getPrincipalEmail() + " email: " + email);
             if (SpringSecurityUtil.getPrincipalEmail().equals(email)) {
                 return userRepository.removeUserByEmail(email);
             }

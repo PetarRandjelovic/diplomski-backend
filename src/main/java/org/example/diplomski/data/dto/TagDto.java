@@ -7,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeDto {
+public class TagDto {
 
     private Long id;
-    private Long postId;
-    private String email;
-    private Long commentId;
-
+    private String name;
 }

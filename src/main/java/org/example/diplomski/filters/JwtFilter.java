@@ -36,6 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = null;
 
 
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
             role = jwtUtil.getRole(jwt);
@@ -44,6 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails principal = User.withUserDetails(this.userService.loadUserByUsername(email)).username(email).roles(role).build();
+
             if (jwtUtil.validateToken(jwt, principal)) {
                 UsernamePasswordAuthenticationToken
                         usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

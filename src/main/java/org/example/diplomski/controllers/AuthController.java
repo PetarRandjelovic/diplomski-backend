@@ -3,6 +3,7 @@ package org.example.diplomski.controllers;
 
 import org.example.diplomski.data.dto.LoginDto;
 import org.example.diplomski.data.dto.TokenDto;
+import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.jwtUtils.JwtUtil;
 import org.example.diplomski.mapper.UserMapper;
 import org.example.diplomski.services.UserService;
@@ -38,5 +39,24 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(new TokenDto(jwtUtil.generateToken(userService.findByEmail(loginRequest.getEmail()))));
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<?> signUp(@RequestBody UserDto userDto) {
+        try {
+            // Check if email already exists
+//            if (userService.existsByEmail(userDto.getEmail())) {
+//                return ResponseEntity.badRequest().body("Email is already taken.");
+//            }
+
+            // Encrypt the password
+        //    userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+            // Save the user
+            UserDto createdUser = userService.createUser(userDto);
+            return ResponseEntity.ok(createdUser.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred during sign-up.");
+        }
     }
 }

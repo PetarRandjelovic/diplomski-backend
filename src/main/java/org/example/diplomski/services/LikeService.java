@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LikeService {
 
-    void likePost(Long postId, Long userId);
-    void unlikePost(Long postId, Long userId);
-    void likeComment(Long commentId, Long userId);
-    void unlikeComment(Long commentId, Long userId);
+    LikeDto likePost(LikeDto likeDto);
+    LikeDto likeComment(LikeDto likeDto);
     boolean isPostLikedByUser(Long postId, Long userId);
     boolean isCommentLikedByUser(Long commentId, Long userId);
     LikeDto findByPostId(Long postId);

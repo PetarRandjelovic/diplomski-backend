@@ -30,7 +30,6 @@ services:
         condition: service_healthy
     networks:
       - backend
-
 networks:
   backend:
     name: diplomski-network

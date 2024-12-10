@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -26,6 +27,8 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    private Long creationDate;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Media> media;
@@ -37,4 +40,18 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Like> likes;
+
+    @ManyToMany
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @ToString.Exclude
+    private List<Tag> tags;
+
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = Instant.now().toEpochMilli();
+    }
 }

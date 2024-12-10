@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface MediaRepository extends JpaRepository<Media, Long> {
 
  //   Media findByPostIdAndUserId(Long postId, Long userId);
-//    void delete(Long id);
+
 
 }

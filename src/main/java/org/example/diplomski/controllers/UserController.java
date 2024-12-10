@@ -1,10 +1,8 @@
 package org.example.diplomski.controllers;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.entites.User;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
 import org.example.diplomski.services.UserService;
@@ -40,6 +38,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         try {
+
             UserDto newUserDto = userService.createUser(userDto);
             return ResponseEntity.ok(newUserDto.getId());
         } catch (EmailTakenException e) {
@@ -59,7 +58,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/delete/{email}", consumes = MediaType.ALL_VALUE)
-    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER','PRIVATE','PUBLIC')")
     @Transactional
     public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) {
         try {
@@ -68,6 +67,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
 
+    }
+
+    @PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
 }

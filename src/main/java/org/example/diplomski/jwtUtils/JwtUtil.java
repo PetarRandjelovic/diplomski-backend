@@ -43,7 +43,6 @@ public class JwtUtil {
         claims.put("email", userDto.getEmail());
         claims.put("role", userDto.getRole());
 
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDto.getEmail())

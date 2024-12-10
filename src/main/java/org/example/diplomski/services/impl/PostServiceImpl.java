@@ -1,6 +1,7 @@
 package org.example.diplomski.services.impl;
 
 import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.mapper.PostMapper;
 import org.example.diplomski.repositories.PostRepository;
@@ -9,6 +10,8 @@ import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+
+import java.util.List;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -26,8 +29,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto findById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post not found"));
-        System.out.println(post + " POSTS");
-
            return postMapper.postToPostDto(post);
     }
 
@@ -55,5 +56,29 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto save(PostDto postDto) {
         return null;
+    }
+
+    @Override
+    public PostDto createPost(PostDto postDto) {
+
+        Post post = postMapper.postDtoToPost(postDto);
+
+        if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
+            if (SpringSecurityUtil.getPrincipalEmail().equals(postDto.getUserEmail())) {
+                postRepository.save(post);
+            }
+        }
+
+
+        return postMapper.postToPostDto(post);
+    }
+
+    @Override
+    public List<PostDto> findAll() {
+
+
+        List<Post> posts = postRepository.findAll();
+
+        return posts.stream().map(postMapper::postToPostDto).toList();
     }
 }

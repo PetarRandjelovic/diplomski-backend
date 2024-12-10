@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRelationshipRepository extends JpaRepository<UserRelationship, Long> {
-    //    List<UserRelationship> findUserFollowers(User user);
-//    List<UserRelationship> findFollowedUsers(User followedUser);
     List<UserRelationship> findByUser(User user);
     List<UserRelationship> findByFollowedUser(User follower);
     Optional<UserRelationship> findByUserAndFollowedUser(User user, User followedUser);

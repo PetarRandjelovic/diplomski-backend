@@ -21,11 +21,13 @@ public class BootstrapData implements CommandLineRunner {
     private final UserRelationshipRepository userRelationshipRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final TagRepository tagRepository;
 
     public void run(String... args) {
         try {
             logger.info("USERService: DEV DATA LOADING IN PROGRESS...");
 
+            loadTags();
             loadRoles();
             loadUsers();
             loadUserRelationships();
@@ -36,6 +38,18 @@ public class BootstrapData implements CommandLineRunner {
             logger.info("USERService: DEV DATA LOADING FINISHED...");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadTags() {
+        if (tagRepository.count() == 0) {
+            Tag tag1 = new Tag();
+            tag1.setName("Travel");
+            tagRepository.save(tag1);
+
+            Tag tag2 = new Tag();
+            tag2.setName("Food");
+            tagRepository.save(tag2);
         }
     }
 
@@ -54,7 +68,14 @@ public class BootstrapData implements CommandLineRunner {
             Post post1 = new Post();
             post1.setUser(userRepository.findByEmail("mirko@gmail.com").get());
             post1.setContent("This is a post from Mirko");
+            post1.setTags(tagRepository.findAll());
             postRepository.save(post1);
+
+            Post post2 = new Post();
+            post2.setUser(userRepository.findByEmail("mirko@gmail.com").get());
+            post2.setContent("This is a post from Mirko as well");
+            post2.setTags(tagRepository.findAll());
+            postRepository.save(post2);
         }
     }
 
