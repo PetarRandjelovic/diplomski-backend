@@ -62,6 +62,8 @@ public class SpringSecurityConfig  {
                                 .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/users/public/**")).permitAll()
+                                .requestMatchers("/ws/**").permitAll()
+                                .requestMatchers("/ws/**", "/user/**").permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
