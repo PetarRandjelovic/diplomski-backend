@@ -1,20 +1,20 @@
 package org.example.diplomski.services.impl;
 
+import org.example.diplomski.data.dto.LikeCommentDto;
 import org.example.diplomski.data.dto.LikeDto;
-import org.example.diplomski.data.entites.Comment;
-import org.example.diplomski.data.entites.Like;
-import org.example.diplomski.data.entites.Post;
-import org.example.diplomski.data.entites.User;
+import org.example.diplomski.data.dto.LikePostDto;
+import org.example.diplomski.data.entites.*;
+import org.example.diplomski.mapper.LikeCommentMapper;
 import org.example.diplomski.mapper.LikeMapper;
-import org.example.diplomski.repositories.CommentRepository;
-import org.example.diplomski.repositories.LikeRepository;
-import org.example.diplomski.repositories.PostRepository;
-import org.example.diplomski.repositories.UserRepository;
+import org.example.diplomski.mapper.LikePostMapper;
+import org.example.diplomski.repositories.*;
 import org.example.diplomski.services.LikeService;
 import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+
+import java.util.List;
 
 @Service
 public class LikeServiceImpl implements LikeService {
@@ -24,52 +24,65 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final LikeCommentRepository likeCommentRepository;
+    private final LikePostRepository likePostRepository;
+    private final LikePostMapper likePostMapper;
+    private final LikeCommentMapper likeCommentMapper;
 
     @Autowired
-    public LikeServiceImpl(LikeRepository likeRepository, LikeMapper likeMapper, UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository) {
+    public LikeServiceImpl(LikeRepository likeRepository, LikeMapper likeMapper, UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository,
+                           LikeCommentRepository likeCommentRepository, LikePostRepository likePostRepository, LikePostMapper likePostMapper, LikeCommentMapper likeCommentMapper) {
         this.likeRepository = likeRepository;
         this.likeMapper = likeMapper;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.likeCommentRepository = likeCommentRepository;
+        this.likePostRepository = likePostRepository;
+        this.likePostMapper = likePostMapper;
+        this.likeCommentMapper = likeCommentMapper;
+
     }
 
 
     @Override
-    public LikeDto likePost(LikeDto likeDto) {
-        User user = userRepository.findByEmail(likeDto.getEmail()).orElseThrow(() -> new NotFoundException("User with id: " + likeDto.getEmail() + " not found."));
-        Post post = postRepository.findById(likeDto.getPostId()).orElseThrow(() -> new NotFoundException("Post with id: " + likeDto.getPostId() + " not found."));
-        Like existingLike = likeRepository.findByPostIdAndUserId(post.getId(), user.getId());
-        if (existingLike != null) {
-            likeRepository.delete(existingLike);
+    public LikePostDto likePost(LikePostDto likePostDto) {
+        User user = userRepository.findByEmail(likePostDto.getEmail()).orElseThrow(() -> new NotFoundException("User with id: " + likePostDto.getEmail() + " not found."));
+        Post post = postRepository.findById(likePostDto.getPostId()).orElseThrow(() -> new NotFoundException("Post with id: " + likePostDto.getPostId() + " not found."));
+        boolean existingLike = likePostRepository.existsByPostIdAndUserId(post.getId(), user.getId());
+        System.out.println("existingLike: " + existingLike);
+        if (existingLike) {
+            LikePost likePost = likePostRepository.findByPostIdAndUserId(likePostDto.getPostId(), user.getId());
+            likePostRepository.delete(likePost);
             return null;
         }
-        Like like = new Like();
+        LikePost like = new LikePost();
         like.setPost(post);
         like.setUser(user);
-        likeRepository.save(like);
+        likePostRepository.save(like);
 
-        return likeMapper.toDto(like);
+        return likePostMapper.toDto(like);
     }
 
     @Override
-    public LikeDto likeComment(LikeDto likeDto) {
+    public LikeCommentDto likeComment(LikeCommentDto likeCommentDto) {
 
-        User user = userRepository.findByEmail(likeDto.getEmail()).orElseThrow(() -> new NotFoundException("User with id: " + likeDto.getEmail() + " not found."));
-        Comment comment = commentRepository.findById(likeDto.getCommentId()).orElseThrow(() -> new NotFoundException("Comment with id: " + likeDto.getCommentId() + " not found."));
+        User user = userRepository.findByEmail(likeCommentDto.getEmail()).orElseThrow(() -> new NotFoundException("User with id: " + likeCommentDto.getEmail() + " not found."));
+        Comment comment = commentRepository.findById(likeCommentDto.getCommentId()).orElseThrow(() -> new NotFoundException("Comment with id: " + likeCommentDto.getCommentId() + " not found."));
 
-        Like existingLike = likeRepository.findByCommentIdAndUserId(comment.getId(), user.getId());
-        if (existingLike != null) {
-            likeRepository.delete(existingLike);
+        boolean existingLike = likeCommentRepository.existsByCommentIdAndUserId(comment.getId(), user.getId());
+
+        if (existingLike) {
+            likeCommentRepository.delete(likeCommentMapper.toEntity(likeCommentDto));
             return null;
         }
 
-        Like like = new Like();
+        LikeComment like = new LikeComment();
         like.setComment(comment);
         like.setUser(user);
-        likeRepository.save(like);
+        likeCommentRepository.save(like);
 
-        return likeMapper.toDto(like);
+        return likeCommentMapper.toDto(like);
     }
 
     @Override
@@ -124,4 +137,31 @@ public class LikeServiceImpl implements LikeService {
         throw new RuntimeException("You don't have permission to delete this post.");
 
     }
+
+    @Override
+    public int getPostLikesCount(Long postId) {
+        return likePostRepository.findByPostId(postId).size();
+    }
+
+    @Override
+    public int getCommentLikesCount(Long commentId) {
+
+        return likeCommentRepository.findByCommentId(commentId).size();
+    }
+
+    @Override
+    public boolean hasUserLikedPost(Long postId, String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) return false;
+        return likePostRepository.existsByPostIdAndUserId(postId, user.getId());
+    }
+
+    @Override
+    public boolean hasUserLikedComment(Long commentId, String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) return false;
+        return likeCommentRepository.existsByCommentIdAndUserId(commentId, user.getId());
+    }
+
 }

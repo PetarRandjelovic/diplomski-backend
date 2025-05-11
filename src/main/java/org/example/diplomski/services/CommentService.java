@@ -3,6 +3,8 @@ package org.example.diplomski.services;
 import org.example.diplomski.data.dto.CommentDto;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface CommentService {
 
@@ -11,8 +13,9 @@ public interface CommentService {
     CommentDto update(CommentDto commentDto);
     Boolean delete(Long id);
     CommentDto save(CommentDto commentDto);
-    CommentDto findByPostId(Long postId);
+    List<CommentDto> findCommentsByPostId(Long postId);
     CommentDto findByUserId(Long userId);
+    CommentDto createPostByPostId(Long postId, String username,String comment);
 
 
 

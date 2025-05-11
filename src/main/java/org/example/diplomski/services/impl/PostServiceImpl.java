@@ -1,34 +1,43 @@
 package org.example.diplomski.services.impl;
 
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.dto.TagDto;
 import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.Post;
+import org.example.diplomski.data.entites.Tag;
+import org.example.diplomski.exceptions.PostNotFoundException;
 import org.example.diplomski.mapper.PostMapper;
 import org.example.diplomski.repositories.PostRepository;
+import org.example.diplomski.repositories.TagRepository;
 import org.example.diplomski.services.PostService;
 import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final PostMapper postMapper;
+    private final TagRepository tagRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper) {
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
+        this.tagRepository = tagRepository;
     }
 
 
     @Override
     public PostDto findById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post not found"));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
            return postMapper.postToPostDto(post);
     }
 
@@ -39,7 +48,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Boolean delete(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post with id: " + id + " not found."));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
         if (SpringSecurityUtil.hasRoleRole("ROLE_ADMIN")) {
             postRepository.delete(post);
             return true;
@@ -63,11 +72,21 @@ public class PostServiceImpl implements PostService {
 
         Post post = postMapper.postDtoToPost(postDto);
 
-        if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
+      //  if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
             if (SpringSecurityUtil.getPrincipalEmail().equals(postDto.getUserEmail())) {
+                List<Tag> tags= new ArrayList<>();
+
+                for (TagDto tagDto : postDto.getTags()) {
+                    System.out.println(tagDto.getName());
+                   Tag tag = tagRepository.findByName(tagDto.getName())
+                            .orElseGet(() -> tagRepository.save(new Tag(null, tagDto.getName())));
+                    tags.add(tag);
+                }
+                post.setTags(tags);
+
                 postRepository.save(post);
             }
-        }
+     //   }
 
 
         return postMapper.postToPostDto(post);

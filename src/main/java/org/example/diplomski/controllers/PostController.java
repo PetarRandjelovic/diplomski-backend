@@ -38,9 +38,7 @@ public class PostController {
     @GetMapping(path = "/id/{id}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findById(@PathVariable Long id) {
         PostDto postDto = postService.findById(id);
-        if (postDto == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
         return ResponseEntity.ok(postDto);
     }
 

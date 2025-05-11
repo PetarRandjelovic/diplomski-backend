@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("http://localhost:3000")
-                .setHandshakeHandler(new MyHandShakeHandler()) // <-- Add this!
+                .setHandshakeHandler(new MyHandShakeHandler())
                 .withSockJS();
     }
 }
