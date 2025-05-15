@@ -6,10 +6,13 @@ import org.example.diplomski.data.dto.TagDto;
 import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
+import org.example.diplomski.data.entites.User;
 import org.example.diplomski.exceptions.PostNotFoundException;
+import org.example.diplomski.exceptions.UserEmailNotFoundException;
 import org.example.diplomski.mapper.PostMapper;
 import org.example.diplomski.repositories.PostRepository;
 import org.example.diplomski.repositories.TagRepository;
+import org.example.diplomski.repositories.UserRepository;
 import org.example.diplomski.services.PostService;
 import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +29,14 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, TagRepository tagRepository) {
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, TagRepository tagRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.tagRepository = tagRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -99,5 +104,16 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = postRepository.findAll();
 
         return posts.stream().map(postMapper::postToPostDto).toList();
+    }
+
+    @Override
+    public List<PostDto> findByEmail(String email) {
+
+        User user=userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+
+        List<Post> postList=postRepository.findByUserEmail(user.getEmail()).stream().toList();
+
+
+        return postList.stream().map(postMapper::postToPostDto).toList();
     }
 }

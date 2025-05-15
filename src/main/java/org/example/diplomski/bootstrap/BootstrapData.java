@@ -10,6 +10,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 @RequiredArgsConstructor
 public class BootstrapData implements CommandLineRunner {
@@ -104,12 +107,7 @@ public class BootstrapData implements CommandLineRunner {
 
 
         if (userRepository.count() == 0) {
-            User user1 = new User();
-            user1.setEmail("petar@gmail.com");
-            user1.setUsername("petar@gmail.com");
-            user1.setPassword(passwordEncoder.encode("petar"));
-            user1.setRole(roleRepository.findByRoleType(RoleType.ADMIN).get());
-            userRepository.save(user1);
+
 
             User user2 = new User();
             user2.setEmail("marko@gmail.com");
@@ -124,6 +122,37 @@ public class BootstrapData implements CommandLineRunner {
             user3.setPassword(passwordEncoder.encode("mirko"));
             user3.setRole(roleRepository.findByRoleType(RoleType.PRIVATE).get());
             userRepository.save(user3);
+
+            User user1 = new User();
+            user1.setEmail("petar@gmail.com");
+            user1.setUsername("petar@gmail.com");
+            user1.setPassword(passwordEncoder.encode("petar"));
+            user1.setRole(roleRepository.findByRoleType(RoleType.ADMIN).get());
+            userRepository.save(user1);
+
+            String[][] users = {
+                    {"ana.jovic@gmail.com", "ana_jovic", "ana123"},
+                    {"nikola.petrovic@gmail.com", "nikola_petrovic", "nikola123"},
+                    {"jelena.m@gmail.com", "jelena_m", "jelena123"},
+                    {"uros.ivanovic@gmail.com", "uros_ivanovic", "uros123"},
+                    {"tijana.k@gmail.com", "tijana_k", "tijana123"},
+                    {"stefan.nikolic@gmail.com", "stefan_n", "stefan123"},
+                    {"milica.s@gmail.com", "milica_s", "milica123"},
+                    {"filip.djordjevic@gmail.com", "filip_d", "filip123"},
+                    {"katarina.l@gmail.com", "katarina_l", "katarina123"},
+                    {"dusan.radovic@gmail.com", "dusan_r", "dusan123"}
+            };
+
+            Role privateRole = roleRepository.findByRoleType(RoleType.PRIVATE).get();
+
+            for (String[] userData : users) {
+                User user = new User();
+                user.setEmail(userData[0]);
+                user.setUsername(userData[1]);
+                user.setPassword("password");
+                user.setRole(privateRole);
+                userRepository.save(user);
+            }
         }
 
     }
@@ -133,18 +162,18 @@ public class BootstrapData implements CommandLineRunner {
 
         if (userRelationshipRepository.count() == 0) {
             UserRelationship userRelationship1 = new UserRelationship();
-            userRelationship1.setUser(userRepository.findByEmail("petar@gmail.com").get());
-            userRelationship1.setFollowedUser(userRepository.findByEmail("marko@gmail.com").get());
+            userRelationship1.setUser1(userRepository.findByEmail("petar@gmail.com").get());
+            userRelationship1.setUser2(userRepository.findByEmail("marko@gmail.com").get());
             userRelationshipRepository.save(userRelationship1);
 
             UserRelationship userRelationship2 = new UserRelationship();
-            userRelationship2.setUser(userRepository.findByEmail("petar@gmail.com").get());
-            userRelationship2.setFollowedUser(userRepository.findByEmail("mirko@gmail.com").get());
+            userRelationship2.setUser1(userRepository.findByEmail("petar@gmail.com").get());
+            userRelationship2.setUser2(userRepository.findByEmail("mirko@gmail.com").get());
             userRelationshipRepository.save(userRelationship2);
 
             UserRelationship userRelationship3 = new UserRelationship();
-            userRelationship3.setUser(userRepository.findByEmail("marko@gmail.com").get());
-            userRelationship3.setFollowedUser(userRepository.findByEmail("mirko@gmail.com").get());
+            userRelationship3.setUser1(userRepository.findByEmail("marko@gmail.com").get());
+            userRelationship3.setUser2(userRepository.findByEmail("mirko@gmail.com").get());
             userRelationshipRepository.save(userRelationship3);
 
 

@@ -14,7 +14,9 @@ public interface UserRelationshipService {
     Boolean followUnfollowUser(String senderEmail, String receiverEmail);
     Boolean unfollowUser(String senderEmail, String receiverEmail);
     List<UserRelationshipDto> getFollowedUsers(String senderEmail);
-    List<UserRelationshipDto> getFollowers(String senderEmail);
+    List<UserRelationshipDto> getFollowingUsers(String senderEmail);
+    int getFollowerCount(String senderEmail);
+    int getFollowingCount(String senderEmail);
 
 
 }

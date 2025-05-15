@@ -1,5 +1,6 @@
 package org.example.diplomski.mapper;
 
+import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
@@ -28,5 +29,13 @@ public class UserMapper {
         return user;
     }
 
-
+    public User toEntityFromRecord(CreateUserRecord createUserRecord) {
+        User user = new User();
+        user.setId(createUserRecord.id());
+        user.setDateOfBirth(createUserRecord.dateOfBirth());
+        user.setEmail(createUserRecord.email());
+        user.setUsername(createUserRecord.username());
+        user.setRole(new Role(createUserRecord.role()));
+        return user;
+    }
 }

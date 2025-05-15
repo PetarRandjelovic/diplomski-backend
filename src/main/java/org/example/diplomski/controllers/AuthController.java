@@ -1,6 +1,7 @@
 package org.example.diplomski.controllers;
 
 
+import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.LoginDto;
 import org.example.diplomski.data.dto.TokenDto;
 import org.example.diplomski.data.dto.UserDto;
@@ -42,21 +43,9 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@RequestBody UserDto userDto) {
-        try {
-            // Check if email already exists
-//            if (userService.existsByEmail(userDto.getEmail())) {
-//                return ResponseEntity.badRequest().body("Email is already taken.");
-//            }
+    public ResponseEntity<?> signUp(@RequestBody CreateUserRecord createUserRecord) {
+            UserDto createdUser = userService.createUser(createUserRecord);
+            return ResponseEntity.ok(createdUser);
 
-            // Encrypt the password
-        //    userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-
-            // Save the user
-            UserDto createdUser = userService.createUser(userDto);
-            return ResponseEntity.ok(createdUser.getId());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred during sign-up.");
-        }
     }
 }

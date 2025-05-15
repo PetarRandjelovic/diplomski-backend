@@ -1,5 +1,6 @@
 package org.example.diplomski.services;
 
+import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +13,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto findByEmail(String email);
 
-    UserDto createUser(UserDto userDto);
+    UserDto createUser(CreateUserRecord createUserRecord);
 
     UserDto updateUser(UserDto userDto);
 

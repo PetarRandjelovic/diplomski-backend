@@ -42,6 +42,11 @@ public class PostController {
         return ResponseEntity.ok(postDto);
     }
 
+    @GetMapping(path = "/email/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> findByUserEmail(@PathVariable String email) {
+        return ResponseEntity.ok(postService.findByEmail(email));
+    }
+
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
    // @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
     public ResponseEntity<?> createPost(@RequestBody PostDto postDto) {

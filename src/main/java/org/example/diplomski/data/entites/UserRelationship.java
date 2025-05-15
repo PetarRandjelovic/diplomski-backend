@@ -18,12 +18,14 @@ public class UserRelationship {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user1_id")
+    private User user1;
 
     @ManyToOne
-    @JoinColumn(name = "followed_id")
-    private User followedUser;
+    @JoinColumn(name = "user2_id")
+    private User user2;
+
+    private boolean confirmed;
 
 
 }

@@ -2,6 +2,7 @@ package org.example.diplomski.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
@@ -28,6 +29,7 @@ public class UserController {
     @GetMapping(path = "/{id}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findById(@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
+
         if (userDto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -36,11 +38,11 @@ public class UserController {
 
     @PostMapping("/create/user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRecord userDto) {
         try {
 
             UserDto newUserDto = userService.createUser(userDto);
-            return ResponseEntity.ok(newUserDto.getId());
+            return ResponseEntity.ok(newUserDto);
         } catch (EmailTakenException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (MissingRoleException e) {
@@ -51,6 +53,7 @@ public class UserController {
     @GetMapping(path = "/email/{email}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findByEmail(@PathVariable String email) {
         UserDto userDto = userService.findByEmail(email);
+
         if (userDto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

@@ -11,6 +11,7 @@ import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -31,13 +32,14 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role = new Role(RoleType.USER);
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<UserRelationship> following = new ArrayList<>();
+    private List<UserRelationship> friendshipsInitiated = new ArrayList<>();
 
-    @OneToMany(mappedBy = "followedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<UserRelationship> followers = new ArrayList<>();
+    private List<UserRelationship> friendshipsReceived = new ArrayList<>();
+
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

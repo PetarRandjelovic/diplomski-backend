@@ -16,4 +16,5 @@ public interface PostService {
     List<PostDto> findAll();
 
 
+    List<PostDto> findByEmail(String email);
 }

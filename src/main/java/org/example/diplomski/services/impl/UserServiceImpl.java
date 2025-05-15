@@ -1,9 +1,11 @@
 package org.example.diplomski.services.impl;
 
+import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.enums.RoleType;
+import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
 import org.example.diplomski.mapper.UserMapper;
 import org.example.diplomski.repositories.RoleRepository;
@@ -31,19 +33,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+
     }
 
     @Override
     public UserDto findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found."));
-        System.out.println("??????hahahahahah");
         return userMapper.toDto(user);
     }
 
@@ -56,19 +57,25 @@ public class UserServiceImpl implements UserService {
 
     // @Transactional
     @Override
-    public UserDto createUser(UserDto userDto) {
-        User user = userMapper.toEntity(userDto);
+    public UserDto createUser(CreateUserRecord createUserRecord) {
+        if (userRepository.findByEmail(createUserRecord.email()).isPresent()) {
+            throw new EmailTakenException(createUserRecord.email());
+        }
+
+        User user = userMapper.toEntityFromRecord(createUserRecord);
+
         Role role = roleRepository.findByRoleType(RoleType.USER)
                 .orElseThrow(() -> new MissingRoleException("USER"));
 
         user.setRole(role);
-        user.setUsername(userDto.getEmail());
-     //   user.setPassword(passwordEncoder.encode(Thread.currentThread().getName() + new Random().nextLong() + Thread.activeCount()));
-        //    user.setPassword(passwordEncoder.encode("sifra"));
+        user.setUsername(createUserRecord.password());
+        user.setPassword(passwordEncoder.encode(createUserRecord.password()));
 
 
         User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        UserDto userDto = userMapper.toDto(savedUser);
+        System.out.println(userDto);
+        return userDto;
     }
 
     @Override
@@ -76,6 +83,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new NotFoundException("User with id: " + userDto.getId() + " not found."));
 
         user.setDateOfBirth(userDto.getDateOfBirth());
+        user.setUsername(userDto.getUsername());
+
+
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Date: " + user.getDateOfBirth()
+                + " Username: " + user.getUsername());
 
 
         return userMapper.toDto(userRepository.save(user));
@@ -98,9 +111,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found."));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username: " + email + " not found."));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 

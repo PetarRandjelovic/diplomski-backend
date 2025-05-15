@@ -26,19 +26,36 @@ public class UserRelationshipController {
     private final UserRelationshipService userRelationshipService;
 
 
-    @GetMapping(path = "/email/{email}", consumes = MediaType.ALL_VALUE)
-    public ResponseEntity<?> findByUser(@PathVariable String email) {
+    @GetMapping(path = "/followed/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> findFollowedUser(@PathVariable String email) {
         List<UserRelationshipDto> userRelationshipList = userRelationshipService.getFollowedUsers(email);
 
         return ResponseEntity.ok(userRelationshipList);
     }
 
 
-    @GetMapping(path = "/follow-unfollow/{emailSender}/{emailReciever}", consumes = MediaType.ALL_VALUE)
-    public ResponseEntity<?> followUnfollowUser(@PathVariable String emailSender, @PathVariable String emailReciever) {
-      Boolean s= userRelationshipService.followUnfollowUser(emailSender, emailReciever);
+    @GetMapping(path = "/following/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> findFollowingUser(@PathVariable String email) {
+        List<UserRelationshipDto> userRelationshipList = userRelationshipService.getFollowingUsers(email);
+
+        return ResponseEntity.ok(userRelationshipList);
+    }
+
+    @GetMapping(path = "/follow-unfollow/{emailSender}/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> followUnfollowUser(@PathVariable String emailSender, @PathVariable String email) {
+      Boolean s= userRelationshipService.followUnfollowUser(emailSender, email);
 
         return ResponseEntity.ok(s);
+    }
+
+    @GetMapping(path = "user-follower/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getUserFollowers(@PathVariable String email) {
+        return ResponseEntity.ok(userRelationshipService.getFollowerCount(email));
+    }
+
+    @GetMapping(path = "user-following/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getUserFollowing(@PathVariable String email) {
+        return ResponseEntity.ok(userRelationshipService.getFollowingCount(email));
     }
 
 

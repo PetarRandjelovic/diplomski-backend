@@ -11,10 +11,10 @@ public class UserRelationshipMapper {
     public UserRelationshipDto toDto (UserRelationship userRelationship) {
         UserRelationshipDto userRelationshipDto = new UserRelationshipDto();
         userRelationshipDto.setId(userRelationship.getId());
-        userRelationshipDto.setUserId(userRelationship.getUser().getId());
-        userRelationshipDto.setEmail(userRelationship.getUser().getEmail());
-        userRelationshipDto.setFollowedUserId(userRelationship.getFollowedUser().getId());
-        userRelationshipDto.setFollowedEmail(userRelationship.getFollowedUser().getEmail());
+        userRelationshipDto.setUserId(userRelationship.getUser1().getId());
+        userRelationshipDto.setEmail(userRelationship.getUser1().getEmail());
+        userRelationshipDto.setFollowedUserId(userRelationship.getUser2().getId());
+        userRelationshipDto.setFollowedEmail(userRelationship.getUser2().getEmail());
 
         return userRelationshipDto;
     }
