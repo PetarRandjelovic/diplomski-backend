@@ -1,13 +1,16 @@
 package org.example.diplomski.services.impl;
 
+import jakarta.transaction.Transactional;
 import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
+import org.example.diplomski.data.entites.UserProfile;
 import org.example.diplomski.data.enums.RoleType;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
 import org.example.diplomski.mapper.UserMapper;
+import org.example.diplomski.repositories.ImageDataRepository;
 import org.example.diplomski.repositories.RoleRepository;
 import org.example.diplomski.repositories.UserRepository;
 import org.example.diplomski.services.UserService;
@@ -31,14 +34,18 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageDataRepository imageDataRepository;
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapper userMapper, RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder, ImageDataRepository imageDataRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.imageDataRepository = imageDataRepository;
 
     }
 
@@ -55,7 +62,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
-    // @Transactional
+     @Transactional
     @Override
     public UserDto createUser(CreateUserRecord createUserRecord) {
         if (userRepository.findByEmail(createUserRecord.email()).isPresent()) {
@@ -71,11 +78,16 @@ public class UserServiceImpl implements UserService {
         user.setUsername(createUserRecord.password());
         user.setPassword(passwordEncoder.encode(createUserRecord.password()));
 
+         UserProfile profile = new UserProfile();
+         profile.setUser(user);
+         profile.setCity("Unknown");
+         profile.setInterests(new ArrayList<>());
+         profile.setProfilePictureUrl(imageDataRepository.findByName("avatar.png").orElseThrow(() -> new NotFoundException("User profile image not found")));
+
 
         User savedUser = userRepository.save(user);
-        UserDto userDto = userMapper.toDto(savedUser);
-        System.out.println(userDto);
-        return userDto;
+
+         return userMapper.toDto(savedUser);
     }
 
     @Override

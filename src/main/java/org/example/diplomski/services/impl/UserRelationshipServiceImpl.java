@@ -1,8 +1,13 @@
 package org.example.diplomski.services.impl;
 
+import org.aspectj.asm.internal.Relationship;
+import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
+import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.enums.RelationshipStatus;
+import org.example.diplomski.exceptions.RelationshipExistsException;
 import org.example.diplomski.exceptions.UserEmailNotFoundException;
 import org.example.diplomski.mapper.UserRelationshipMapper;
 import org.example.diplomski.repositories.UserRelationshipRepository;
@@ -42,10 +47,10 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
             UserRelationship userRelationship = new UserRelationship();
             userRelationship.setUser1(sender);
             userRelationship.setUser2(receiver);
-            userRelationship.setConfirmed(true);
+            // userRelationship.setConfirmed(true);
             userRelationshipRepository.save(userRelationship);
         } else {
-            userRelationshipRepository.delete(userRelationshipRepository.findByUser1AndUser2(sender,receiver).get());
+            userRelationshipRepository.delete(userRelationshipRepository.findByUser1AndUser2(sender, receiver).get());
 
         }
 
@@ -53,40 +58,86 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     }
 
 
+    @Override
+    public Boolean unfollowUser(String senderEmail, String receiverEmail) {
+        return null;
+    }
+
+    @Override
+    public List<UserRelationshipDto> getFollowedUsers(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+        List<UserRelationship> userRelationships = userRelationshipRepository.findByUser1(user);
+
+        return userRelationships.stream().map(userRelationshipMapper::toDto).toList();
+    }
+
+    @Override
+    public List<UserRelationshipDto> getFollowingUsers(String email) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+        List<UserRelationship> userRelationships = userRelationshipRepository.findByUser2(user);
+
+        return userRelationships.stream().map(userRelationshipMapper::toDto).toList();
+    }
+
+    @Override
+    public int getFollowerCount(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+        return userRelationshipRepository.countFollowers(user.getId());
+    }
+
+    @Override
+    public int getFollowingCount(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+        return userRelationshipRepository.countFollowing(user.getId());
+    }
+
+    @Override
+    public UserRelationshipDto createFriendRequest(CreateUserRelationshipRecord createUserRelationshipRecord) {
+        String receiverEmail = createUserRelationshipRecord.emailReceiver();
+        String senderEmail = createUserRelationshipRecord.emailSender();
+
+        User userSender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new UserEmailNotFoundException(receiverEmail));
+        User userReciever = userRepository.findByEmail(receiverEmail).orElseThrow(() -> new UserEmailNotFoundException(receiverEmail));
 
 
+        boolean exist = userRelationshipRepository.existsByUser1AndUser2(userReciever, userSender);
 
-@Override
-public Boolean unfollowUser(String senderEmail, String receiverEmail) {
-    return null;
-}
+        if (exist)
+            throw new RelationshipExistsException(senderEmail, receiverEmail);
 
-@Override
-public List<UserRelationshipDto> getFollowedUsers(String email) {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
-    List<UserRelationship> userRelationships = userRelationshipRepository.findByUser1(user);
+        System.out.println(userSender + " " + userReciever);
+        UserRelationship relationship = new UserRelationship();
+        relationship.setUser1(userSender);
+        relationship.setUser2(userReciever);
+        relationship.setStatus(RelationshipStatus.WAITING);
 
-    return userRelationships.stream().map(userRelationshipMapper::toDto).toList();
-}
 
-@Override
-public List<UserRelationshipDto> getFollowingUsers(String email) {
+        return userRelationshipMapper.toDto(userRelationshipRepository.save(relationship));
+    }
 
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
-    List<UserRelationship> userRelationships = userRelationshipRepository.findByUser2(user);
+    @Override
+    public UserRelationshipDto userRelationshipAnswer(UserRelationshipAnswerRecord userRelationshipAnswerRecord) {
+        User user1 = userRepository.findByEmail(userRelationshipAnswerRecord.emailSender()).orElseThrow(() -> new UserEmailNotFoundException(userRelationshipAnswerRecord.emailSender()));
+        User user2 = userRepository.findByEmail(userRelationshipAnswerRecord.emailReceiver()).orElseThrow(() -> new UserEmailNotFoundException(userRelationshipAnswerRecord.emailReceiver()));
+        Optional<UserRelationship> userRelationship = userRelationshipRepository.findByUser1AndUser2(user1, user2);
 
-    return userRelationships.stream().map(userRelationshipMapper::toDto).toList();
-}
+        if (userRelationshipAnswerRecord.status()) {
+            userRelationship.ifPresent(relationship -> relationship.setStatus(RelationshipStatus.CONFIRMED));
+            userRelationshipRepository.save(userRelationship.get());
+            return userRelationshipMapper.toDto(userRelationship.get());
+        } else {
+            userRelationship.ifPresent(relationship -> relationship.setStatus(RelationshipStatus.DECLINED));
+            userRelationshipRepository.delete(userRelationshipRepository.findByUser1AndUser2(user1, user2).get());
+        }
 
-@Override
-public int getFollowerCount(String email) {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
-    return userRelationshipRepository.countFollowers(user.getId());
-}
+        return null;
+    }
 
-@Override
-public int getFollowingCount(String email) {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
-    return userRelationshipRepository.countFollowing(user.getId());
-}
+    @Override
+    public int getUserFriendsCount(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
+        List<UserRelationship> list = userRelationshipRepository.findConfirmedByUserAndStatus(user.getId(), RelationshipStatus.CONFIRMED);
+        return list.size();
+    }
 }

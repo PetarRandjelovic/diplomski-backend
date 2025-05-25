@@ -1,7 +1,9 @@
 package org.example.diplomski.services;
 
 
+import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserDto;
+import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.UserRelationship;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,10 @@ public interface UserRelationshipService {
     List<UserRelationshipDto> getFollowingUsers(String senderEmail);
     int getFollowerCount(String senderEmail);
     int getFollowingCount(String senderEmail);
+    UserRelationshipDto createFriendRequest(CreateUserRelationshipRecord createUserRelationshipRecord);
+
+    UserRelationshipDto userRelationshipAnswer(UserRelationshipAnswerRecord userRelationshipAnswerRecord);
+    int getUserFriendsCount(String email);
 
 
 }

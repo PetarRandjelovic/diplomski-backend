@@ -1,6 +1,7 @@
 package org.example.diplomski.data.entites;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,5 +50,29 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonManagedReference
+    private UserProfile userProfile;
+
+//    @PrePersist
+//    public void prePersist() {
+//        if (this.userProfile == null) {
+//            UserProfile profile = new UserProfile();
+//            profile.setUser(this);
+//            this.setUserProfile(profile);
+//        }
+//    }
+
+//    private String city;
+//
+//    @ElementCollection
+//    private List<String> interests;
+//
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "image_id")
+//    private ImageData profileImage;
 
 }

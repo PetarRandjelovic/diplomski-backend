@@ -24,6 +24,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler({RelationshipExistsException.class})
+    public ResponseEntity<ErrorResponse> RelationshipExistsException(Exception ex, WebRequest request) {
+        ex.printStackTrace();
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

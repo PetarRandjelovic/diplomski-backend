@@ -4,6 +4,7 @@ package org.example.diplomski.data.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.diplomski.data.enums.RelationshipStatus;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class UserRelationshipDto {
     private String email;
     private Long followedUserId;
     private String followedEmail;
+    private RelationshipStatus status;
 
 
 }

@@ -2,7 +2,9 @@ package org.example.diplomski.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserDto;
+import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.UserRelationship;
 import org.example.diplomski.services.UserRelationshipService;
@@ -41,11 +43,16 @@ public class UserRelationshipController {
         return ResponseEntity.ok(userRelationshipList);
     }
 
-    @GetMapping(path = "/follow-unfollow/{emailSender}/{email}", consumes = MediaType.ALL_VALUE)
-    public ResponseEntity<?> followUnfollowUser(@PathVariable String emailSender, @PathVariable String email) {
-      Boolean s= userRelationshipService.followUnfollowUser(emailSender, email);
+    @PostMapping(path = "/create-request", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> sendFriendRequest(@RequestBody CreateUserRelationshipRecord createUserRelationshipRecord) {
 
-        return ResponseEntity.ok(s);
+        return ResponseEntity.ok( userRelationshipService.createFriendRequest(createUserRelationshipRecord));
+    }
+
+    @PostMapping(path = "/confirm-decline", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> sendFriendRequest(@RequestBody UserRelationshipAnswerRecord userRelationshipAnswerRecord) {
+
+        return ResponseEntity.ok( userRelationshipService.userRelationshipAnswer(userRelationshipAnswerRecord));
     }
 
     @GetMapping(path = "user-follower/{email}", consumes = MediaType.ALL_VALUE)
@@ -58,5 +65,10 @@ public class UserRelationshipController {
         return ResponseEntity.ok(userRelationshipService.getFollowingCount(email));
     }
 
+
+    @GetMapping(path = "user-friends/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getUserFriends(@PathVariable String email) {
+        return ResponseEntity.ok(userRelationshipService.getUserFriendsCount(email));
+    }
 
 }

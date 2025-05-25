@@ -15,6 +15,7 @@ public class UserRelationshipMapper {
         userRelationshipDto.setEmail(userRelationship.getUser1().getEmail());
         userRelationshipDto.setFollowedUserId(userRelationship.getUser2().getId());
         userRelationshipDto.setFollowedEmail(userRelationship.getUser2().getEmail());
+        userRelationshipDto.setStatus(userRelationship.getStatus());
 
         return userRelationshipDto;
     }

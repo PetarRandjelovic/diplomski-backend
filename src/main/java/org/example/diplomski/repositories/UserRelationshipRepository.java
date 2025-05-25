@@ -2,6 +2,7 @@ package org.example.diplomski.repositories;
 
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.enums.RelationshipStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,15 @@ public interface UserRelationshipRepository extends JpaRepository<UserRelationsh
 
     @Query("SELECT COUNT(r) FROM UserRelationship r WHERE r.user2.id = :userId")
     int countFollowers(@Param("userId") Long userId);
+
+   Boolean existsByUser1AndUser2(User user1, User user2);
+
+    @Query("""
+        FROM UserRelationship r
+        WHERE r.status = :status
+          AND (r.user1.id = :userId OR r.user2.id = :userId)
+        """)
+    List<UserRelationship> findConfirmedByUserAndStatus(@Param("userId") Long userId,@Param("status") RelationshipStatus status);
 
 
 }

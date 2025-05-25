@@ -1,9 +1,9 @@
 package org.example.diplomski.data.entites;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -21,9 +21,18 @@ public class UserProfile {
     @ElementCollection
     private List<String> interests;
 
-    private String profilePictureUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    private ImageData profilePictureUrl;
+
 
     @OneToOne
     @MapsId
+    @ToString.Exclude
+    @JsonBackReference
     private User user;
+
+
+
 }

@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.diplomski.data.enums.RelationshipStatus;
 
 @Entity
-@Table(name = "user_relationship")
+@Table(
+        name = "user_relationship",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user1_id", "user2_id"})
+)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +29,7 @@ public class UserRelationship {
     @JoinColumn(name = "user2_id")
     private User user2;
 
-    private boolean confirmed;
+    private RelationshipStatus status;
 
 
 }
