@@ -38,7 +38,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     public Boolean followUnfollowUser(String senderEmail, String receiverEmail) {
         User sender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new UserEmailNotFoundException(senderEmail));
         User receiver = userRepository.findByEmail(receiverEmail).orElseThrow(() -> new UserEmailNotFoundException(receiverEmail));
-        ;
+
 
 
         Optional<UserRelationship> userRelationships1 = userRelationshipRepository.findByUser1AndUser2(sender, receiver);
