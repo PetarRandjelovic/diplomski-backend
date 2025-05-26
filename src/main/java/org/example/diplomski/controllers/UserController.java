@@ -11,8 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -34,6 +37,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(userDto);
+    }
+
+
+    @GetMapping(path = "/all", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getAllUsers() {
+        List<UserDto> list = userService.findAll();
+
+        return ResponseEntity.ok(list);
     }
 
     @PostMapping("/create/user")
@@ -77,4 +88,17 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
+
+
+    @GetMapping(path = "/allLol", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getPotentialFriendUsers() {
+        List<UserDto> list = userService.findPotentialFriendUsers();
+
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping(path = "recommended/{email}",consumes = MediaType.ALL_VALUE)
+    public List<UserDto> getRecommendations(@PathVariable String email) {
+        return userService.recommendFriends(email);
+    }
 }

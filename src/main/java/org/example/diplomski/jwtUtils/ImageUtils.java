@@ -1,10 +1,8 @@
 package org.example.diplomski.jwtUtils;
 
-import org.example.diplomski.data.entites.ImageData;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 

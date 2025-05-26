@@ -51,65 +51,6 @@ public class UserLoaderService {
 
                 byte[] compressedImage1 = img.getImageData();
 
-//                User user2 = new User();
-//                user2.setEmail("marko@gmail.com");
-//                user2.setUsername("marko@gmail.com");
-//                user2.setPassword(passwordEncoder.encode("marko"));
-//                user2.setRole(privateRole);
-//
-//                UserProfile profile2 = new UserProfile();
-//                ImageData userImg1 = ImageData.builder()
-//                        .name("avatarcao.png")
-//                        .type("image/png")
-//                        .imageData(compressedImage1)
-//                        .build();
-//          //      imageDataRepository.save(userImg1);
-//        //        profile2.setProfilePictureUrl(userImg1);
-//                profile2.setCity("Belgrade");
-//                profile2.setInterests(new ArrayList<>());
-//                profile2.setUser(user2);
-//
-//
-//                userProfileRepository.save(profile2);
-
-//                User user3 = new User();
-//                user3.setEmail("mirko@gmail.com");
-//                user3.setUsername("mirko@gmail.com");
-//                user3.setPassword(passwordEncoder.encode("mirko"));
-//                user3.setRole(privateRole);
-//
-//
-//                UserProfile profile1 = new UserProfile();
-//          //      profile1.setProfilePictureUrl(img);
-//                profile1.setCity("Belgrade");
-//                profile1.setInterests(new ArrayList<>());
-//                profile1.setUser(user3);
-////
-////                ImageData userImg2 = ImageData.builder()
-////                        .name("avatar.png")
-////                        .type("image/png")
-////                        .imageData(compressedImage)
-////                        .build();
-////                imageDataRepository.save(userImg2);
-////                profile1.setProfilePictureUrl(userImg2);
-//                userProfileRepository.save(profile1);
-//
-//
-//                User user1 = new User();
-//                user1.setEmail("petar@gmail.com");
-//                user1.setUsername("petar@gmail.com");
-//                user1.setPassword(passwordEncoder.encode("petar"));
-//                user1.setRole(adminRole);
-//
-//
-//                UserProfile profile = new UserProfile();
-//          //        profile.setProfilePictureUrl(img);
-//                profile.setCity("Belgrade");
-//                profile.setInterests(new ArrayList<>());
-//                profile.setUser(user1);
-//
-//               userProfileRepository.save(profile);
-
                 String[][] users = {
                         {"petar@gmail.com","petar@gmail.com","petar"},
                         {"marko@gmail.com","marko@gmail.com","marko"},
@@ -162,8 +103,6 @@ public class UserLoaderService {
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot read default avatar", e);
             }
-
-
 
 
                 }

@@ -4,11 +4,11 @@ package org.example.diplomski.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
-import org.example.diplomski.data.dto.UserRelationshipDto;
-import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
+import org.example.diplomski.data.enums.RelationshipStatus;
 import org.example.diplomski.services.UserRelationshipService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,5 +70,16 @@ public class UserRelationshipController {
     public ResponseEntity<?> getUserFriends(@PathVariable String email) {
         return ResponseEntity.ok(userRelationshipService.getUserFriendsCount(email));
     }
+
+    @GetMapping(path = "relationship-status/{email1}/{email2}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getRelationshipStatus(@PathVariable String email1, @PathVariable String email2) {
+        return ResponseEntity.ok(userRelationshipService.getRelationshipStatus(email1, email2));
+    }
+
+    @GetMapping(path = "incoming/{email}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getIncomingRequests(@PathVariable String email) {
+        return ResponseEntity.ok(userRelationshipService.getIncomingRequests(email));
+    }
+
 
 }

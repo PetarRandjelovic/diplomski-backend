@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -90,41 +92,158 @@ public class BootstrapData implements CommandLineRunner {
 
     private void loadTags() {
         if (tagRepository.count() == 0) {
-            Tag tag1 = new Tag();
-            tag1.setName("Travel");
-            tagRepository.save(tag1);
+            List<String> tagNames = List.of(
+                    "General", "Politics", "Movies", "Anime", "Travel", "Basketball", "Sports", "Fitness", "Health",
+                    "Technology", "Gaming", "Music", "Food", "Fashion", "Beauty", "Photography", "Art", "Education",
+                    "News", "Science", "Books", "Finance", "Business", "Entrepreneurship", "Motivation", "Memes",
+                    "Nature", "Pets", "Dogs", "Cats", "Parenting", "DIY", "Crafts", "Programming", "JavaScript",
+                    "Java", "Python", "Startups", "Self-Improvement", "History", "Environment", "Mental Health",
+                    "Relationships", "Culture", "Spirituality", "Cars", "Motorcycles", "Space", "AI", "Podcasts"
+            );
 
-            Tag tag2 = new Tag();
-            tag2.setName("Food");
-            tagRepository.save(tag2);
+            for (String name : tagNames) {
+                Tag tag = new Tag();
+                tag.setName(name);
+                tagRepository.save(tag);
+            }
         }
     }
-
     private void loadComments() {
         if (commentRepository.count() == 0) {
-            Comment comment1 = new Comment();
-            comment1.setUser(userRepository.findByEmail("marko@gmail.com").get());
-            comment1.setContent("This is a comment from Marko");
-            comment1.setPost(postRepository.findById(1L).get());
-            commentRepository.save(comment1);
+            List<Post> posts = postRepository.findAll();
+            List<String> userEmails = List.of(
+                    "petar@gmail.com", "marko@gmail.com", "mirko@gmail.com", "ana.jovic@gmail.com",
+                    "nikola.petrovic@gmail.com", "jelena.m@gmail.com", "uros.ivanovic@gmail.com",
+                    "tijana.k@gmail.com", "stefan.nikolic@gmail.com", "milica.s@gmail.com",
+                    "filip.djordjevic@gmail.com", "katarina.l@gmail.com", "dusan.radovic@gmail.com"
+            );
+
+            List<String> sampleComments = List.of(
+                    "Totally agree with you!",
+                    "Interesting perspective, thanks for sharing.",
+                    "Haha, this made my day 😂",
+                    "That looks amazing!",
+                    "I’ve been thinking the same thing.",
+                    "Great post, keep it up!",
+                    "Where was this taken?",
+                    "Can you share more about this?",
+                    "Wow, love this idea!",
+                    "Been there, done that 😅",
+                    "Inspirational! Thanks.",
+                    "I needed to hear this today.",
+                    "Yesss! 100% agree.",
+                    "Bookmarking this 🙌",
+                    "Love this energy 🔥"
+            );
+
+            Random random = new Random();
+
+            for (Post post : posts) {
+                int numberOfComments = random.nextInt(4); // 0 to 3 comments per post
+
+                for (int i = 0; i < numberOfComments; i++) {
+                    String email = userEmails.get(random.nextInt(userEmails.size()));
+                    Optional<User> optionalUser = userRepository.findByEmail(email);
+
+                    if (optionalUser.isEmpty()) continue;
+
+                    User user = optionalUser.get();
+
+                    Comment comment = new Comment();
+                    comment.setUser(user);
+                    comment.setPost(post);
+
+                    String content = sampleComments.get(random.nextInt(sampleComments.size()));
+                    comment.setContent(content);
+
+
+                    commentRepository.save(comment);
+                }
+            }
         }
     }
 
     private void loadPosts() {
         if (postRepository.count() == 0) {
-            Post post1 = new Post();
-            post1.setUser(userRepository.findByEmail("mirko@gmail.com").get());
-            post1.setContent("This is a post from Mirko");
-            post1.setTags(tagRepository.findAll());
-            postRepository.save(post1);
+            String[] userEmails = {
+                    "petar@gmail.com", "marko@gmail.com", "mirko@gmail.com", "ana.jovic@gmail.com",
+                    "nikola.petrovic@gmail.com", "jelena.m@gmail.com", "uros.ivanovic@gmail.com",
+                    "tijana.k@gmail.com", "stefan.nikolic@gmail.com", "milica.s@gmail.com",
+                    "filip.djordjevic@gmail.com", "katarina.l@gmail.com", "dusan.radovic@gmail.com"
+            };
 
-            Post post2 = new Post();
-            post2.setUser(userRepository.findByEmail("mirko@gmail.com").get());
-            post2.setContent("This is a post from Mirko as well");
-            post2.setTags(tagRepository.findAll());
-            postRepository.save(post2);
+            // Map content to related tag names
+            Map<String, List<String>> contentTagMap = Map.ofEntries(
+                    Map.entry("Just got back from an amazing trip!", List.of("Travel", "Photography")),
+                    Map.entry("Anyone else watching this series? It's 🔥", List.of("Movies", "Entertainment")),
+                    Map.entry("Working on a new project—can’t wait to share more soon.", List.of("Technology", "Startups")),
+                    Map.entry("Feeling grateful today. 🙏", List.of("Self-Improvement", "Mental Health")),
+                    Map.entry("Any recommendations for good books?", List.of("Books", "Education")),
+                    Map.entry("New recipe turned out great! 😋", List.of("Food")),
+                    Map.entry("Caught a beautiful sunset today.", List.of("Nature", "Photography")),
+                    Map.entry("What’s everyone listening to lately?", List.of("Music")),
+                    Map.entry("Big news coming soon!", List.of("General")),
+                    Map.entry("Is it just me, or is this weather perfect?", List.of("Environment")),
+                    Map.entry("Can’t stop thinking about that movie!", List.of("Movies")),
+                    Map.entry("Productivity mode: ON 💻☕", List.of("Technology", "Productivity")),
+                    Map.entry("Late night thoughts…", List.of("General", "Mental Health")),
+                    Map.entry("Exploring the city was such a vibe today.", List.of("Travel", "Culture")),
+                    Map.entry("My cat decided to help me work today 😂", List.of("Pets", "Cats")),
+                    Map.entry("Basketball season is heating up! 🏀", List.of("Basketball", "Sports")),
+                    Map.entry("Trying out digital painting for the first time!", List.of("Art", "Creativity")),
+                    Map.entry("Let’s talk about tech trends 👇", List.of("Technology", "AI")),
+                    Map.entry("So inspired by this documentary.", List.of("Education", "Movies")),
+                    Map.entry("Weekend well spent 🌿", List.of("Lifestyle", "Nature"))
+            );
+            Map<String, Tag> tagLookup = tagRepository.findAll()
+                    .stream()
+                    .collect(Collectors.toMap(t -> t.getName().toLowerCase(), t -> t));
+
+            Random random = new Random();
+            List<String> contents = new ArrayList<>(contentTagMap.keySet());
+
+            for (int i = 0; i < 30; i++) {
+                String email = userEmails[random.nextInt(userEmails.length)];
+                Optional<User> optionalUser = userRepository.findByEmail(email);
+
+                if (optionalUser.isEmpty()) continue;
+
+                User user = optionalUser.get();
+
+                String content = contents.get(random.nextInt(contents.size()));
+                List<String> tagNames = contentTagMap.get(content);
+
+                // Get Tag objects from tag names (case-insensitive match)
+                Set<Tag> postTags = tagNames.stream()
+                        .map(tagName -> tagLookup.get(tagName.toLowerCase()))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet());
+
+                // Create hashtags from tags
+                String hashtags = postTags.stream()
+                        .map(tag -> "#" + tag.getName().replaceAll("\\s+", "").toLowerCase())
+                        .collect(Collectors.joining(" "));
+
+                Post post = new Post();
+                post.setUser(user);
+                post.setContent(content + " " + hashtags);
+                post.setTags(new ArrayList<>(postTags));
+
+                // Realistic timestamp: last 30 days, random hour/minute
+                LocalDateTime timestamp = LocalDateTime.now()
+                        .minusDays(random.nextInt(30))
+                        .withHour(random.nextInt(24))
+                        .withMinute(random.nextInt(60));
+
+                // If Post expects a timestamp or long millis
+                post.setCreationDate(Timestamp.valueOf(timestamp).getTime()); // or post.setCreatedAt(timestamp) if using LocalDateTime
+
+                postRepository.save(post);
+            }
         }
     }
+
+
 
     private void loadRoles() {
         if (roleRepository.count() == 0) {
@@ -146,133 +265,6 @@ public class BootstrapData implements CommandLineRunner {
         }
 
     }
-
-    @Transactional
-    public void loadUsers() {
-        if (userRepository.count() == 0) {
-
-            Role privateRole = roleRepository.findByRoleType(RoleType.PRIVATE).get();
-            Role adminRole = roleRepository.findByRoleType(RoleType.ADMIN).get();
-
-            //   ImageData img=imageDataRepository.findByName("avatar.png").get();
-            //   Optional<ImageData> dbImageData = imageDataRepository.findByName("avatar.png");
-            Optional<ImageData> optionalImg = imageDataRepository.findByName("avatar.png");
-
-            ImageData profileImage;
-            if (optionalImg.isPresent()) {
-                profileImage = optionalImg.get();
-            } else {
-                try {
-                    profileImage = ImageData.builder()
-                            .name("avatar.png")
-                            .type("image/png")
-                            .imageData(Files.readAllBytes(Paths.get("avatar/avatar.png")))
-                            .build();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                profileImage = imageDataRepository.save(profileImage);
-            }
-
-            User user2 = new User();
-            user2.setEmail("marko@gmail.com");
-            user2.setUsername("marko@gmail.com");
-            user2.setPassword(passwordEncoder.encode("marko"));
-            user2.setRole(privateRole);
-          //  userRepository.save(user2);
-
-            UserProfile profile2 = new UserProfile();
-            //  profile.setProfilePictureUrl(img);
-            profile2.setCity("Belgrade");
-            profile2.setInterests(new ArrayList<>());
-            profile2.setUser(user2);
-          //  profile2.setProfilePictureUrl(profileImage);
-
-            userProfileRepository.save(profile2);
-
-            //       createUserProfile(user2);
-
-
-            User user3 = new User();
-            user3.setEmail("mirko@gmail.com");
-            user3.setUsername("mirko@gmail.com");
-            user3.setPassword(passwordEncoder.encode("mirko"));
-            user3.setRole(privateRole);
-           // userRepository.save(user3);
-
-            UserProfile profile1 = new UserProfile();
-            //  profile.setProfilePictureUrl(img);
-            profile1.setCity("Belgrade");
-            profile1.setInterests(new ArrayList<>());
-            profile1.setUser(user3);
-
-            userProfileRepository.save(profile1);
-            //    createUserProfile(user3);
-
-            User user1 = new User();
-            user1.setEmail("petar@gmail.com");
-            user1.setUsername("petar@gmail.com");
-            user1.setPassword(passwordEncoder.encode("petar"));
-            user1.setRole(adminRole);
-            //   userRepository.save(user1);
-
-            UserProfile profile = new UserProfile();
-            //  profile.setProfilePictureUrl(img);
-            profile.setCity("Belgrade");
-            profile.setInterests(new ArrayList<>());
-            profile.setUser(user1);
-
-            userProfileRepository.save(profile);
-
-
-            String[][] users = {
-                    {"ana.jovic@gmail.com", "ana_jovic", "ana123"},
-                    {"nikola.petrovic@gmail.com", "nikola_petrovic", "nikola123"},
-                    {"jelena.m@gmail.com", "jelena_m", "jelena123"},
-                    {"uros.ivanovic@gmail.com", "uros_ivanovic", "uros123"},
-                    {"tijana.k@gmail.com", "tijana_k", "tijana123"},
-                    {"stefan.nikolic@gmail.com", "stefan_n", "stefan123"},
-                    {"milica.s@gmail.com", "milica_s", "milica123"},
-                    {"filip.djordjevic@gmail.com", "filip_d", "filip123"},
-                    {"katarina.l@gmail.com", "katarina_l", "katarina123"},
-                    {"dusan.radovic@gmail.com", "dusan_r", "dusan123"}
-            };
-
-            for (String[] userData : users) {
-                User user = new User();
-                user.setEmail(userData[0]);
-                user.setUsername(userData[1]);
-                user.setPassword(passwordEncoder.encode(userData[2]));
-                user.setRole(privateRole);
-              //  userRepository.save(user);
-
-                UserProfile profile3 = new UserProfile();
-                //  profile.setProfilePictureUrl(img);
-                profile3.setCity("Belgrade");
-                profile3.setInterests(new ArrayList<>());
-                profile3.setUser(user);
-
-                userProfileRepository.save(profile3);
-                //     createUserProfile(user);
-            }
-        }
-    }
-
-
-//    protected void createUserProfile(User user) {
-//        if (userProfileRepository.findByUserEmail(user.getEmail()).isEmpty()) {
-//            UserProfile profile = new UserProfile();
-//            profile.setUser(user);
-//
-//            Optional<ImageData> imageDataOpt = imageDataRepository.findByNameWithLob("avatar.png");
-//            imageDataOpt.ifPresent(img -> {
-//                img.getImageData(); // Forces LOB initialization inside the session
-//                profile.setProfilePictureUrl(img);
-//            });
-//
-//            userProfileRepository.save(profile);
-//        }
-//    }
 
 
     private void loadUserRelationships() {
@@ -296,11 +288,6 @@ public class BootstrapData implements CommandLineRunner {
             userRelationship3.setStatus(RelationshipStatus.CONFIRMED);
             userRelationshipRepository.save(userRelationship3);
 
-
-//            UserRelationship userRelationship4 = new UserRelationship();
-            //            userRelationship4.setUser1(userRepository.findByEmail("mirko@gmail.com").get());
-//            userRelationship4.setUser2(userRepository.findByEmail("marko@gmail.com").get());
-//            userRelationshipRepository.save(userRelationship4);
 
 
         }

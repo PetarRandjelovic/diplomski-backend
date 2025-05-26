@@ -1,9 +1,7 @@
 package org.example.diplomski.services.impl;
 
-import io.swagger.v3.oas.annotations.tags.Tags;
 import org.example.diplomski.data.dto.PostDto;
 import org.example.diplomski.data.dto.TagDto;
-import org.example.diplomski.data.dto.UserRelationshipDto;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
 import org.example.diplomski.data.entites.User;
@@ -17,11 +15,9 @@ import org.example.diplomski.services.PostService;
 import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -115,5 +111,16 @@ public class PostServiceImpl implements PostService {
 
 
         return postList.stream().map(postMapper::postToPostDto).toList();
+    }
+
+    @Override
+    public List<PostDto> findByTag(List<String> tag) {
+
+        if(tag.isEmpty()){
+            return findAll();
+        }
+        List<Post> listPosts=postRepository.findByTags(tag);
+
+        return listPosts.stream().map(postMapper::postToPostDto).toList();
     }
 }

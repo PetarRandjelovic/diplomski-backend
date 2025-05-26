@@ -1,10 +1,11 @@
 package org.example.diplomski.services.impl;
 
-import org.aspectj.asm.internal.Relationship;
 import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
-import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
-import org.example.diplomski.data.dto.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
 import org.example.diplomski.data.entites.User;
+import org.example.diplomski.data.entites.UserProfile;
 import org.example.diplomski.data.entites.UserRelationship;
 import org.example.diplomski.data.enums.RelationshipStatus;
 import org.example.diplomski.exceptions.RelationshipExistsException;
@@ -19,6 +20,8 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserRelationshipServiceImpl implements UserRelationshipService {
@@ -38,7 +41,6 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     public Boolean followUnfollowUser(String senderEmail, String receiverEmail) {
         User sender = userRepository.findByEmail(senderEmail).orElseThrow(() -> new UserEmailNotFoundException(senderEmail));
         User receiver = userRepository.findByEmail(receiverEmail).orElseThrow(() -> new UserEmailNotFoundException(receiverEmail));
-
 
 
         Optional<UserRelationship> userRelationships1 = userRelationshipRepository.findByUser1AndUser2(sender, receiver);
@@ -140,4 +142,36 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         List<UserRelationship> list = userRelationshipRepository.findConfirmedByUserAndStatus(user.getId(), RelationshipStatus.CONFIRMED);
         return list.size();
     }
+
+    @Override
+    public UserRelationshipRecord getRelationshipStatus(String email1, String email2) {
+        User user1 = userRepository.findByEmail(email1)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user2 = userRepository.findByEmail(email2)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserRelationship relationship = userRelationshipRepository
+                .findByUser1AndUser2OrUser2AndUser1(user1, user2, user1, user2)
+                .orElse(null);
+
+        RelationshipStatus relationshipStatus = relationship != null ? relationship.getStatus() : RelationshipStatus.NEUTRAL;
+
+        return userRelationshipMapper.toUserRelationRecord(email1,email2,relationshipStatus);
+
+    }
+
+
+    @Override
+    public List<UserRelationshipRecord> getIncomingRequests(String email) {
+        List<UserRelationship> relationships = userRelationshipRepository
+                .findByUser2EmailAndStatus(email, RelationshipStatus.WAITING);
+
+        return relationships.stream()
+                .map(rel -> new UserRelationshipRecord(
+                        rel.getUser1().getEmail(),
+                        rel.getUser2().getEmail(),
+                        rel.getStatus()
+                )).toList();
+    }
+
 }

@@ -11,13 +11,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping(
         value = "/api/posts",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
+        produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class PostController {
 
@@ -63,4 +64,8 @@ public class PostController {
         return ResponseEntity.ok(postService.findAll());
     }
 
+    @GetMapping(path = "/tags")
+    public ResponseEntity<?> findByTags(@RequestParam List<String> tags) {
+        return ResponseEntity.ok(postService.findByTag(tags));
+    }
 }

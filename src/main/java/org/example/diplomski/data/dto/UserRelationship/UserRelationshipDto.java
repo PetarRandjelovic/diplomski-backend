@@ -1,4 +1,4 @@
-package org.example.diplomski.data.dto;
+package org.example.diplomski.data.dto.UserRelationship;
 
 
 import lombok.AllArgsConstructor;

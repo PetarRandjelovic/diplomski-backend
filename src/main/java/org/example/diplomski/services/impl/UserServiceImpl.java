@@ -3,16 +3,21 @@ package org.example.diplomski.services.impl;
 import jakarta.transaction.Transactional;
 import org.example.diplomski.data.dto.CreateUserRecord;
 import org.example.diplomski.data.dto.UserDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserProfile;
+import org.example.diplomski.data.entites.UserRelationship;
 import org.example.diplomski.data.enums.RoleType;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
 import org.example.diplomski.mapper.UserMapper;
 import org.example.diplomski.repositories.ImageDataRepository;
 import org.example.diplomski.repositories.RoleRepository;
+import org.example.diplomski.repositories.UserRelationshipRepository;
 import org.example.diplomski.repositories.UserRepository;
+import org.example.diplomski.services.RoleService;
+import org.example.diplomski.services.UserRelationshipService;
 import org.example.diplomski.services.UserService;
 import org.example.diplomski.utils.SpringSecurityUtil;
 import org.hibernate.annotations.Cascade;
@@ -24,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 //@RequiredArgsConstructor
@@ -35,18 +43,23 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageDataRepository imageDataRepository;
+    private final UserRelationshipService userRelationshipService;
+    private final UserRelationshipRepository userRelationshipRepository;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            UserMapper userMapper, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, ImageDataRepository imageDataRepository) {
+                           PasswordEncoder passwordEncoder, ImageDataRepository imageDataRepository,
+                           UserRelationshipService userRelationshipService,
+                           UserRelationshipRepository userRelationshipRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageDataRepository = imageDataRepository;
-
+        this.userRelationshipService = userRelationshipService;
+        this.userRelationshipRepository = userRelationshipRepository;
     }
 
     @Override
@@ -62,7 +75,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
-     @Transactional
+    @Transactional
     @Override
     public UserDto createUser(CreateUserRecord createUserRecord) {
         if (userRepository.findByEmail(createUserRecord.email()).isPresent()) {
@@ -78,16 +91,16 @@ public class UserServiceImpl implements UserService {
         user.setUsername(createUserRecord.password());
         user.setPassword(passwordEncoder.encode(createUserRecord.password()));
 
-         UserProfile profile = new UserProfile();
-         profile.setUser(user);
-         profile.setCity("Unknown");
-         profile.setInterests(new ArrayList<>());
-         profile.setProfilePictureUrl(imageDataRepository.findByName("avatar.png").orElseThrow(() -> new NotFoundException("User profile image not found")));
+        UserProfile profile = new UserProfile();
+        profile.setUser(user);
+        profile.setCity("Unknown");
+        profile.setInterests(new ArrayList<>());
+        profile.setProfilePictureUrl(imageDataRepository.findByName("avatar.png").orElseThrow(() -> new NotFoundException("User profile image not found")));
 
 
         User savedUser = userRepository.save(user);
 
-         return userMapper.toDto(savedUser);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
@@ -123,10 +136,69 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(userMapper::toDto).toList();
+    }
+
+    @Override
+    public List<UserDto> findPotentialFriendUsers() {
+
+
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + email + " not found."));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
+    @Override
+    public List<UserDto> recommendFriends(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        // Get all current friends' emails
+        Set<String> currentFriendEmails = userRelationshipRepository.findFriendEmails(email);
+
+        // Add self to exclusion list
+        currentFriendEmails.add(email);
+
+        // Get the user's profile for city & interests
+        UserProfile userProfile = user.getUserProfile();
+        String city = userProfile.getCity();
+        List<String> interests = userProfile.getInterests();
+
+        // Fetch all users not already friends
+        List<User> potentialUsers = userRepository.findAllExcludingEmails(currentFriendEmails);
+
+        // Score users based on similarity
+        return potentialUsers.stream()
+                .sorted((u1, u2) -> {
+                    int score1 = calculateScore(userProfile, u1.getUserProfile());
+                    int score2 = calculateScore(userProfile, u2.getUserProfile());
+                    return Integer.compare(score2, score1); // sort descending
+                })
+                .limit(10)
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+    private int calculateScore(UserProfile base, UserProfile other) {
+        int score = 0;
+        if (base.getCity().equalsIgnoreCase(other.getCity())) score += 5;
+
+        List<String> baseInterests = base.getInterests();
+        List<String> otherInterests = other.getInterests();
+
+        if (baseInterests != null && otherInterests != null) {
+            long common = baseInterests.stream().filter(otherInterests::contains).count();
+            score += (int) (common * 2);
+        }
+
+        return score;
+    }
 }

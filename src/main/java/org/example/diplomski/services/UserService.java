@@ -6,6 +6,8 @@ import org.example.diplomski.data.entites.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserService extends UserDetailsService {
 
@@ -20,5 +22,9 @@ public interface UserService extends UserDetailsService {
     Integer deleteUserByEmail(String email);
 
 
+    List<UserDto> findAll();
 
+    List<UserDto> findPotentialFriendUsers();
+
+    List<UserDto> recommendFriends(String email);
 }

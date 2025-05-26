@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRelationshipRepository extends JpaRepository<UserRelationship, Long> {
@@ -31,5 +32,20 @@ public interface UserRelationshipRepository extends JpaRepository<UserRelationsh
         """)
     List<UserRelationship> findConfirmedByUserAndStatus(@Param("userId") Long userId,@Param("status") RelationshipStatus status);
 
+
+    @Query("SELECT ur.user2.id FROM UserRelationship ur WHERE ur.user1.id = :userId " +
+            "UNION " +
+            "SELECT ur.user1.id FROM UserRelationship ur WHERE ur.user2.id = :userId")
+    Set<Long> findFriendIds(@Param("userId") Long userId);
+
+    @Query("SELECT ur.user2.email FROM UserRelationship ur WHERE ur.user1.email = :email " +
+            "UNION " +
+            "SELECT ur.user1.email FROM UserRelationship ur WHERE ur.user2.email = :email")
+    Set<String> findFriendEmails(@Param("email") String email);
+
+        Optional<UserRelationship> findByUser1AndUser2OrUser2AndUser1(User user1, User user2, User user2Again, User user1Again);
+
+
+        List<UserRelationship> findByUser2EmailAndStatus(String email, RelationshipStatus status);
 
 }

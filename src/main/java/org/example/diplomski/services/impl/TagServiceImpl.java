@@ -1,6 +1,7 @@
 package org.example.diplomski.services.impl;
 
 import org.example.diplomski.data.dto.TagDto;
+import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.Tag;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.mapper.RoleMapper;
@@ -11,6 +12,9 @@ import org.example.diplomski.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -54,5 +58,11 @@ public class TagServiceImpl implements TagService {
         Tag tag = tagRepository.findById(id).orElseThrow(() -> new NotFoundException("Tag with id: " + id + " not found."));
 
         tagRepository.delete(tag);
+    }
+
+    @Override
+    public List<TagDto> findAll() {
+
+        return tagRepository.findAll().stream().map(tagMapper::tagToTagDto).collect(Collectors.toList());
     }
 }

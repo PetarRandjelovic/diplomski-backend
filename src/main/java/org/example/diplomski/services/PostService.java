@@ -1,6 +1,9 @@
 package org.example.diplomski.services;
 
 import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.entites.Post;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,4 +20,8 @@ public interface PostService {
 
 
     List<PostDto> findByEmail(String email);
+
+    List<PostDto> findByTag(List<String> tag);
+
+
 }

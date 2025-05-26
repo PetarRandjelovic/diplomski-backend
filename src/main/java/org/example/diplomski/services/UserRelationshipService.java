@@ -2,10 +2,11 @@ package org.example.diplomski.services;
 
 
 import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
-import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.dto.UserRelationshipAnswerRecord;
-import org.example.diplomski.data.dto.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
 import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.enums.RelationshipStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,4 +26,7 @@ public interface UserRelationshipService {
     int getUserFriendsCount(String email);
 
 
+    UserRelationshipRecord getRelationshipStatus(String email1, String email2);
+
+    List<UserRelationshipRecord>  getIncomingRequests(String email);
 }

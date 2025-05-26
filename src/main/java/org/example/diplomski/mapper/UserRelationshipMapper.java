@@ -1,8 +1,9 @@
 package org.example.diplomski.mapper;
 
-import org.example.diplomski.data.dto.UserRelationshipDto;
-import org.example.diplomski.data.entites.User;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
+import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
 import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.enums.RelationshipStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +20,18 @@ public class UserRelationshipMapper {
 
         return userRelationshipDto;
     }
-    
 
+    public UserRelationshipRecord toUserRelationRecord(UserRelationship userRelationship) {
+
+        return new UserRelationshipRecord(
+                userRelationship.getUser1().getEmail(),userRelationship.getUser2().getEmail(), userRelationship.getStatus()
+        );
+    }
+
+
+    public UserRelationshipRecord toUserRelationRecord(String email1, String email2, RelationshipStatus relationshipStatus) {
+        return new UserRelationshipRecord(
+                email1,email2, relationshipStatus
+        );
+    }
 }

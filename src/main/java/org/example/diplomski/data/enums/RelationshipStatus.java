@@ -7,7 +7,8 @@ public enum RelationshipStatus {
 
     CONFIRMED("CONFIRMED"),
     DECLINED("DECLINED"),
-    WAITING("WAITING");
+    WAITING("WAITING"),
+    NEUTRAL("NEUTRAL");
 
 
     private final String relationshipStatus;
