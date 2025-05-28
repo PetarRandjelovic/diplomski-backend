@@ -2,9 +2,7 @@ package org.example.diplomski.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.diplomski.data.dto.LikeCommentDto;
-import org.example.diplomski.data.dto.LikeDto;
 import org.example.diplomski.data.dto.LikePostDto;
-import org.example.diplomski.data.dto.PostDto;
 import org.example.diplomski.services.LikeService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package org.example.diplomski.mapper;
 
-import org.example.diplomski.data.dto.CreateUserRecord;
-import org.example.diplomski.data.dto.UserDto;
+import org.example.diplomski.data.dto.user.CreateUserRecord;
+import org.example.diplomski.data.dto.user.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
 import org.springframework.stereotype.Component;

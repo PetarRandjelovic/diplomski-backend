@@ -1,6 +1,5 @@
-package org.example.diplomski.data.dto;
+package org.example.diplomski.data.dto.user;
 
-import lombok.Getter;
 import org.example.diplomski.data.enums.RoleType;
 
 public record CreateUserRecord(Long id,

@@ -65,4 +65,13 @@ public class UserProfileController {
 
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<?> getProfilePictureById(@PathVariable Long id){
+        byte[] imageData=storageService.getProfilePictureById(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(imageData);
+
+    }
+
 }

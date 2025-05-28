@@ -1,7 +1,8 @@
 package org.example.diplomski.mapper;
 
-import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.dto.post.PostDto;
 import org.example.diplomski.data.dto.TagDto;
+import org.example.diplomski.data.dto.post.PostRecord;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
 import org.example.diplomski.repositories.UserRepository;
@@ -48,6 +49,14 @@ public class PostMapper {
         post.setTags(tags);
         post.setCreationDate(postDto.getCreationDate());
         return post;
+    }
+
+
+    public PostRecord postToPostRecord(Post post) {
+
+        return new PostRecord(post.getId(), post.getUser().getEmail(),post.getContent(),post.getTags().stream()
+                .map(tag -> new TagDto(tag.getId(), tag.getName())).toList()
+                ,post.getCreationDate(),post.getLikes().size());
     }
 
 }

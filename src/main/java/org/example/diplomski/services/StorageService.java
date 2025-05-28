@@ -16,4 +16,6 @@ public interface StorageService {
     byte[] getProfilePicture(String email);
 
     boolean deleteImage(String name);
+
+    byte[] getProfilePictureById(Long id);
 }

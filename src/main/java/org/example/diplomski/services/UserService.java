@@ -1,8 +1,7 @@
 package org.example.diplomski.services;
 
-import org.example.diplomski.data.dto.CreateUserRecord;
-import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.entites.User;
+import org.example.diplomski.data.dto.user.CreateUserRecord;
+import org.example.diplomski.data.dto.user.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 

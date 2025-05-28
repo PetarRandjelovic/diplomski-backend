@@ -1,12 +1,14 @@
 package org.example.diplomski.services.impl;
 
-import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.dto.post.PostDto;
 import org.example.diplomski.data.dto.TagDto;
+import org.example.diplomski.data.dto.post.PostRecord;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.exceptions.PostNotFoundException;
 import org.example.diplomski.exceptions.UserEmailNotFoundException;
+import org.example.diplomski.exceptions.UserIdNotFoundException;
 import org.example.diplomski.mapper.PostMapper;
 import org.example.diplomski.repositories.PostRepository;
 import org.example.diplomski.repositories.TagRepository;
@@ -16,6 +18,7 @@ import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +86,7 @@ public class PostServiceImpl implements PostService {
                             .orElseGet(() -> tagRepository.save(new Tag(null, tagDto.getName())));
                     tags.add(tag);
                 }
+                post.setCreationDate(Instant.now().toEpochMilli());
                 post.setTags(tags);
 
                 postRepository.save(post);
@@ -94,12 +98,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> findAll() {
+    public List<PostRecord> findAll() {
 
 
         List<Post> posts = postRepository.findAll();
 
-        return posts.stream().map(postMapper::postToPostDto).toList();
+        return posts.stream().map(postMapper::postToPostRecord).toList();
     }
 
     @Override
@@ -107,20 +111,29 @@ public class PostServiceImpl implements PostService {
 
         User user=userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
 
-        List<Post> postList=postRepository.findByUserEmail(user.getEmail()).stream().toList();
 
+        List<Post> postList = postRepository.findAllByUserId(user.getId()).stream().toList();
 
         return postList.stream().map(postMapper::postToPostDto).toList();
     }
 
     @Override
-    public List<PostDto> findByTag(List<String> tag) {
+    public List<PostRecord> findByTag(List<String> tag) {
 
         if(tag.isEmpty()){
             return findAll();
         }
         List<Post> listPosts=postRepository.findByTags(tag);
 
-        return listPosts.stream().map(postMapper::postToPostDto).toList();
+        return listPosts.stream().map(postMapper::postToPostRecord).toList();
+    }
+
+    @Override
+    public List<PostDto> findByUserId(Long id) {
+        User user=userRepository.findById(id).orElseThrow(() -> new UserIdNotFoundException(id.toString()));
+
+        List<Post> postList = postRepository.findAllByUserId(user.getId()).stream().toList();
+
+        return postList.stream().map(postMapper::postToPostDto).toList();
     }
 }

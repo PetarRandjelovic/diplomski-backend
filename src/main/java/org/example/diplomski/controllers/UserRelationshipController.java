@@ -3,11 +3,8 @@ package org.example.diplomski.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
-import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
-import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
-import org.example.diplomski.data.enums.RelationshipStatus;
 import org.example.diplomski.services.UserRelationshipService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

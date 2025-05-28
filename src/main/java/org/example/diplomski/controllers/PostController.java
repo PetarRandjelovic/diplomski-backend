@@ -2,7 +2,7 @@ package org.example.diplomski.controllers;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.diplomski.data.dto.PostDto;
+import org.example.diplomski.data.dto.post.PostDto;
 import org.example.diplomski.services.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,6 +46,11 @@ public class PostController {
     @GetMapping(path = "/email/{email}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findByUserEmail(@PathVariable String email) {
         return ResponseEntity.ok(postService.findByEmail(email));
+    }
+
+    @GetMapping(path = "/userId/{id}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> findByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.findByUserId(id));
     }
 
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)

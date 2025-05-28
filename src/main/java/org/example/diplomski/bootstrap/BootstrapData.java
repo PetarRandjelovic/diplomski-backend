@@ -9,6 +9,7 @@ import org.example.diplomski.exceptions.UserEmailNotFoundException;
 import org.example.diplomski.jwtUtils.ImageUtils;
 import org.example.diplomski.repositories.*;
 import org.example.diplomski.services.StorageService;
+import org.example.diplomski.utils.SpringSecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -21,6 +22,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.*;
@@ -41,6 +43,7 @@ public class BootstrapData implements CommandLineRunner {
     private final UserProfileRepository userProfileRepository;
     private final ImageDataRepository imageDataRepository;
     private final UserLoaderService userLoaderService;
+    private final LikePostRepository likePostRepository;
 
     public void run(String... args) {
         try {
@@ -56,6 +59,7 @@ public class BootstrapData implements CommandLineRunner {
             loadUserRelationships();
             loadPosts();
             loadComments();
+            loadLikes();
 
 
             logger.info("USERService: DEV DATA LOADING FINISHED...");
@@ -63,6 +67,41 @@ public class BootstrapData implements CommandLineRunner {
             e.printStackTrace();
         }
     }
+
+    private void loadLikes() {
+        if (likePostRepository.count() == 0) {
+            List<Post> allPosts = postRepository.findAll();
+            List<User> allUsers = userRepository.findAll();
+            Random random = new Random();
+
+            for (Post post : allPosts) {
+                // Exclude the post's author from likers
+                List<User> availableUsers = allUsers.stream()
+                        .filter(user -> !user.getId().equals(post.getUser().getId()))
+                        .collect(Collectors.toList());
+
+                if (availableUsers.isEmpty()) continue;
+
+                // Cap number of likes to available users
+                int numberOfLikes = random.nextInt(availableUsers.size() + 1); // +1 because nextInt is exclusive
+
+                // Shuffle to get unique random users
+                Collections.shuffle(availableUsers);
+
+                for (int i = 0; i < numberOfLikes; i++) {
+                    User user = availableUsers.get(i);
+
+                    LikePost likePost = new LikePost();
+                    likePost.setPost(post);
+                    likePost.setUser(user);
+
+                    likePostRepository.save(likePost);
+                }
+            }
+        }
+    }
+
+
 
     private void loadImages() {
         if (imageDataRepository.count() == 0) {
@@ -165,6 +204,14 @@ public class BootstrapData implements CommandLineRunner {
 
     private void loadPosts() {
         if (postRepository.count() == 0) {
+
+            Post post1 = new Post();
+            post1.setContent("Hello World!");
+            post1.setCreationDate(0L);
+            post1.setUser(userRepository.findByEmail("petar@gmail.com").get());
+
+            postRepository.save(post1);
+
             String[] userEmails = {
                     "petar@gmail.com", "marko@gmail.com", "mirko@gmail.com", "ana.jovic@gmail.com",
                     "nikola.petrovic@gmail.com", "jelena.m@gmail.com", "uros.ivanovic@gmail.com",
@@ -229,14 +276,14 @@ public class BootstrapData implements CommandLineRunner {
                 post.setContent(content + " " + hashtags);
                 post.setTags(new ArrayList<>(postTags));
 
-                // Realistic timestamp: last 30 days, random hour/minute
-                LocalDateTime timestamp = LocalDateTime.now()
-                        .minusDays(random.nextInt(30))
-                        .withHour(random.nextInt(24))
-                        .withMinute(random.nextInt(60));
+                int daysAgo = random.nextInt(30); // 0 to 29 days ago
+                int hour = random.nextInt(24);
+                int minute = random.nextInt(60);
+                int second = random.nextInt(60);
 
-                // If Post expects a timestamp or long millis
-                post.setCreationDate(Timestamp.valueOf(timestamp).getTime()); // or post.setCreatedAt(timestamp) if using LocalDateTime
+                LocalDate randomDate = LocalDate.now().minusDays(daysAgo);
+                LocalDateTime timestamp = randomDate.atTime(hour, minute, second);
+                post.setCreationDate(Timestamp.valueOf(timestamp).getTime());
 
                 postRepository.save(post);
             }

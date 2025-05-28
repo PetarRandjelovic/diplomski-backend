@@ -112,9 +112,6 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public byte[] getProfilePicture(String email) {
 
-//        byte[] images=ImageUtils.decompressImage(dbImageData.get().getImageData());
-//        return images;
-
         User user=userRepository.findByEmail(email).orElseThrow(()->new NotFoundException("User not found"));
         UserProfile userProfile=userProfileRepository.findByUserEmail(email).orElseThrow(()->new NotFoundException("UserProfile for user email " + email + " not found."));
 
@@ -131,6 +128,17 @@ public class StorageServiceImpl implements StorageService {
         imageDataRepository.delete(dbImageData);
 
         return true;
+    }
+
+    @Transactional
+    @Override
+    public byte[] getProfilePictureById(Long id) {
+        User user=userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+        UserProfile userProfile=userProfileRepository.findByUserId(id).orElseThrow(()->new NotFoundException("UserProfile for user email " + id + " not found."));
+
+        byte[] imageData=ImageUtils.decompressImage(userProfile.getProfilePictureUrl().getImageData());
+
+        return imageData;
     }
 
     @Transactional

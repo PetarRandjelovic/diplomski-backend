@@ -1,9 +1,9 @@
-package org.example.diplomski.data.dto;
+package org.example.diplomski.data.dto.post;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.diplomski.data.entites.Tag;
+import org.example.diplomski.data.dto.TagDto;
 
 import java.util.List;
 

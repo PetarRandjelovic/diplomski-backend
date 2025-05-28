@@ -1,13 +1,11 @@
 package org.example.diplomski.services.impl;
 
 import jakarta.transaction.Transactional;
-import org.example.diplomski.data.dto.CreateUserRecord;
-import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
+import org.example.diplomski.data.dto.user.CreateUserRecord;
+import org.example.diplomski.data.dto.user.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserProfile;
-import org.example.diplomski.data.entites.UserRelationship;
 import org.example.diplomski.data.enums.RoleType;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
@@ -16,11 +14,9 @@ import org.example.diplomski.repositories.ImageDataRepository;
 import org.example.diplomski.repositories.RoleRepository;
 import org.example.diplomski.repositories.UserRelationshipRepository;
 import org.example.diplomski.repositories.UserRepository;
-import org.example.diplomski.services.RoleService;
 import org.example.diplomski.services.UserRelationshipService;
 import org.example.diplomski.services.UserService;
 import org.example.diplomski.utils.SpringSecurityUtil;
-import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +26,6 @@ import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 

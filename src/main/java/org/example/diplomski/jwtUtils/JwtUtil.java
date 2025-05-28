@@ -3,7 +3,7 @@ package org.example.diplomski.jwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.example.diplomski.data.dto.UserDto;
+import org.example.diplomski.data.dto.user.UserDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

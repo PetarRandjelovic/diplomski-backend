@@ -1,12 +1,8 @@
 package org.example.diplomski.services.impl;
 
 import org.example.diplomski.data.dto.TagDto;
-import org.example.diplomski.data.dto.UserDto;
 import org.example.diplomski.data.entites.Tag;
-import org.example.diplomski.data.entites.User;
-import org.example.diplomski.mapper.RoleMapper;
 import org.example.diplomski.mapper.TagMapper;
-import org.example.diplomski.repositories.RoleRepository;
 import org.example.diplomski.repositories.TagRepository;
 import org.example.diplomski.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;

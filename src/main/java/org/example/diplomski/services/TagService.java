@@ -1,8 +1,6 @@
 package org.example.diplomski.services;
 
 import org.example.diplomski.data.dto.TagDto;
-import org.example.diplomski.data.dto.UserDto;
-import org.example.diplomski.data.entites.Tag;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -15,6 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByUserId(Long userId);
     Optional<Post> findByUserEmail(String email);
+    List<Post> findAllByUserId(Long userId);
 
     @Query("SELECT DISTINCT p FROM Post p JOIN p.tags t WHERE t.name IN :tagNames")
     List<Post> findByTags(@Param("tagNames") List<String> tagNames);
