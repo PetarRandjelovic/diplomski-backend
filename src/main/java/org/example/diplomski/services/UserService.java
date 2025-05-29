@@ -20,6 +20,7 @@ public interface UserService extends UserDetailsService {
 
     Integer deleteUserByEmail(String email);
 
+    List<UserDto> searchUsers(String query);
 
     List<UserDto> findAll();
 

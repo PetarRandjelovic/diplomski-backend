@@ -4,6 +4,7 @@ package org.example.diplomski.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.diplomski.data.dto.user.CreateUserRecord;
 import org.example.diplomski.data.dto.user.UserDto;
+import org.example.diplomski.data.entites.User;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
 import org.example.diplomski.services.UserService;
@@ -27,6 +28,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping(path = "/search/users", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> searchUsers(@RequestParam String query) {
+        return ResponseEntity.ok(userService.searchUsers(query));
+    }
+
 
     @GetMapping(path = "/{id}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findById(@PathVariable Long id) {
@@ -88,7 +95,6 @@ public class UserController {
     }
 
 
-
     @GetMapping(path = "/allLol", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> getPotentialFriendUsers() {
         List<UserDto> list = userService.findPotentialFriendUsers();
@@ -96,7 +102,7 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping(path = "recommended/{email}",consumes = MediaType.ALL_VALUE)
+    @GetMapping(path = "recommended/{email}", consumes = MediaType.ALL_VALUE)
     public List<UserDto> getRecommendations(@PathVariable String email) {
         return userService.recommendFriends(email);
     }

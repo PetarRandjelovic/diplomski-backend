@@ -58,6 +58,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> searchUsers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+        return userRepository.searchUsers(query.trim()).stream().map(userMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
     public UserDto findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found."));
         return userMapper.toDto(user);
