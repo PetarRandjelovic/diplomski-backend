@@ -1,8 +1,8 @@
 package org.example.diplomski.services.impl;
 
-import org.example.diplomski.data.dto.LikeCommentDto;
+import org.example.diplomski.data.dto.like.LikeCommentDto;
 import org.example.diplomski.data.dto.LikeDto;
-import org.example.diplomski.data.dto.LikePostDto;
+import org.example.diplomski.data.dto.like.LikePostDto;
 import org.example.diplomski.data.entites.*;
 import org.example.diplomski.mapper.LikeCommentMapper;
 import org.example.diplomski.mapper.LikeMapper;
@@ -13,8 +13,6 @@ import org.example.diplomski.utils.SpringSecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
-
-import java.util.List;
 
 @Service
 public class LikeServiceImpl implements LikeService {

@@ -48,4 +48,10 @@ public interface UserRelationshipRepository extends JpaRepository<UserRelationsh
 
         List<UserRelationship> findByUser2EmailAndStatus(String email, RelationshipStatus status);
 
+
+    @Query("SELECT ur.user2 FROM UserRelationship ur WHERE ur.user1.id = :userId AND ur.status = :status")
+    List<User> findFriendsByUser1(@Param("userId") Long userId, @Param("status") RelationshipStatus status);
+
+    @Query("SELECT ur.user1 FROM UserRelationship ur WHERE ur.user2.id = :userId AND ur.status = :status")
+    List<User> findFriendsByUser2(@Param("userId") Long userId, @Param("status") RelationshipStatus status);
 }

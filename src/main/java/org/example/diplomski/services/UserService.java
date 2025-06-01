@@ -24,7 +24,8 @@ public interface UserService extends UserDetailsService {
 
     List<UserDto> findAll();
 
-    List<UserDto> findPotentialFriendUsers();
 
     List<UserDto> recommendFriends(String email);
+
+    List<UserDto> getFriendUsers(Long id);
 }

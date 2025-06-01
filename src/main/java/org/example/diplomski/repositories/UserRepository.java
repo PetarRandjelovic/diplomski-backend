@@ -32,4 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.email NOT IN :emails")
     List<User> findAllExcludingEmails(@Param("emails") Set<String> emails);
 
+
+
 }

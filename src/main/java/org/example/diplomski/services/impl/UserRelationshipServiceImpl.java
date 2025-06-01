@@ -1,11 +1,10 @@
 package org.example.diplomski.services.impl;
 
-import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
+import org.example.diplomski.data.dto.UserRelationship.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
 import org.example.diplomski.data.entites.User;
-import org.example.diplomski.data.entites.UserProfile;
 import org.example.diplomski.data.entites.UserRelationship;
 import org.example.diplomski.data.enums.RelationshipStatus;
 import org.example.diplomski.exceptions.RelationshipExistsException;
@@ -16,12 +15,9 @@ import org.example.diplomski.repositories.UserRepository;
 import org.example.diplomski.services.UserRelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserRelationshipServiceImpl implements UserRelationshipService {
@@ -173,5 +169,6 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
                         rel.getStatus()
                 )).toList();
     }
+
 
 }

@@ -2,7 +2,7 @@ package org.example.diplomski.controllers;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
+import org.example.diplomski.data.dto.UserRelationship.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
 import org.example.diplomski.services.UserRelationshipService;

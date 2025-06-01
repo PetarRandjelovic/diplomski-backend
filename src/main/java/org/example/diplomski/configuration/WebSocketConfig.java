@@ -1,7 +1,11 @@
 package org.example.diplomski.configuration;
 
+import org.example.diplomski.data.dto.ChatMessage.GroupMessageDTO;
 import org.example.diplomski.handler.MyHandShakeHandler;
+import org.example.diplomski.services.impl.GroupChatService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -11,6 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -26,4 +31,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setHandshakeHandler(new MyHandShakeHandler())
                 .withSockJS();
     }
+
+
 }

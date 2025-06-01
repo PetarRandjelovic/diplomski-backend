@@ -1,6 +1,6 @@
 package org.example.diplomski.mapper;
 
-import org.example.diplomski.data.dto.LikePostDto;
+import org.example.diplomski.data.dto.like.LikePostDto;
 import org.example.diplomski.data.entites.LikePost;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

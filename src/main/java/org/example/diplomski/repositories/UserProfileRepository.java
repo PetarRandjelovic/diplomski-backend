@@ -1,6 +1,5 @@
 package org.example.diplomski.repositories;
 
-import org.example.diplomski.data.dto.UserProfileRecord;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;

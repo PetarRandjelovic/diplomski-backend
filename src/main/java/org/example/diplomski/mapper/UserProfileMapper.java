@@ -1,7 +1,7 @@
 package org.example.diplomski.mapper;
 
-import org.example.diplomski.data.dto.ImageDataRecord;
-import org.example.diplomski.data.dto.UserProfileRecord;
+import org.example.diplomski.data.dto.profile.ImageDataRecord;
+import org.example.diplomski.data.dto.profile.UserProfileRecord;
 import org.example.diplomski.data.entites.ImageData;
 import org.example.diplomski.data.entites.UserProfile;
 import org.mapstruct.Mapper;

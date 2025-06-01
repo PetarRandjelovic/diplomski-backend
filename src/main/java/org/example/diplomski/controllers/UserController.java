@@ -95,9 +95,9 @@ public class UserController {
     }
 
 
-    @GetMapping(path = "/allLol", consumes = MediaType.ALL_VALUE)
-    public ResponseEntity<?> getPotentialFriendUsers() {
-        List<UserDto> list = userService.findPotentialFriendUsers();
+    @GetMapping(path = "/friends/{id}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> getFriendUsers(@PathVariable Long id) {
+        List<UserDto> list = userService.getFriendUsers(id);
 
         return ResponseEntity.ok(list);
     }

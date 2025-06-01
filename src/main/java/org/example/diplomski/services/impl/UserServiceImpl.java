@@ -6,9 +6,12 @@ import org.example.diplomski.data.dto.user.UserDto;
 import org.example.diplomski.data.entites.Role;
 import org.example.diplomski.data.entites.User;
 import org.example.diplomski.data.entites.UserProfile;
+import org.example.diplomski.data.entites.UserRelationship;
+import org.example.diplomski.data.enums.RelationshipStatus;
 import org.example.diplomski.data.enums.RoleType;
 import org.example.diplomski.exceptions.EmailTakenException;
 import org.example.diplomski.exceptions.MissingRoleException;
+import org.example.diplomski.exceptions.UserIdNotFoundException;
 import org.example.diplomski.mapper.UserMapper;
 import org.example.diplomski.repositories.ImageDataRepository;
 import org.example.diplomski.repositories.RoleRepository;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 //@RequiredArgsConstructor
@@ -145,13 +149,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findPotentialFriendUsers() {
-
-
-        return null;
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + email + " not found."));
@@ -187,6 +184,19 @@ public class UserServiceImpl implements UserService {
                 .limit(10)
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDto> getFriendUsers(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserIdNotFoundException(id.toString()));
+
+        List<User> friends1 = userRelationshipRepository.findFriendsByUser1(id, RelationshipStatus.CONFIRMED);
+        List<User> friends2 = userRelationshipRepository.findFriendsByUser2(id, RelationshipStatus.CONFIRMED);
+        List<User> allFriends = Stream.concat(friends1.stream(), friends2.stream()).toList();
+
+        System.out.println(allFriends);
+
+        return allFriends.stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
 

@@ -1,8 +1,8 @@
 package org.example.diplomski.services;
 
-import org.example.diplomski.data.dto.LikeCommentDto;
+import org.example.diplomski.data.dto.like.LikeCommentDto;
 import org.example.diplomski.data.dto.LikeDto;
-import org.example.diplomski.data.dto.LikePostDto;
+import org.example.diplomski.data.dto.like.LikePostDto;
 import org.springframework.stereotype.Service;
 
 @Service

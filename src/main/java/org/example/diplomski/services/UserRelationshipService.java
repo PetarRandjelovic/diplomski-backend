@@ -1,12 +1,10 @@
 package org.example.diplomski.services;
 
 
-import org.example.diplomski.data.dto.CreateUserRelationshipRecord;
+import org.example.diplomski.data.dto.UserRelationship.CreateUserRelationshipRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipAnswerRecord;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipDto;
 import org.example.diplomski.data.dto.UserRelationship.UserRelationshipRecord;
-import org.example.diplomski.data.entites.UserRelationship;
-import org.example.diplomski.data.enums.RelationshipStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
