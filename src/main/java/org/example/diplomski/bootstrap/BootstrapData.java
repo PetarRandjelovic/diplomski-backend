@@ -60,12 +60,17 @@ public class BootstrapData implements CommandLineRunner {
             loadPosts();
             loadComments();
             loadLikes();
+            loadMedia();
 
 
             logger.info("USERService: DEV DATA LOADING FINISHED...");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadMedia() {
+
     }
 
     private void loadLikes() {

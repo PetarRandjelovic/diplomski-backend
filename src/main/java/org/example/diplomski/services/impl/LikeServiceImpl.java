@@ -83,40 +83,6 @@ public class LikeServiceImpl implements LikeService {
         return likeCommentMapper.toDto(like);
     }
 
-    @Override
-    public boolean isPostLikedByUser(Long postId, Long userId) {
-        return false;
-    }
-
-    @Override
-    public boolean isCommentLikedByUser(Long commentId, Long userId) {
-        return false;
-    }
-
-    @Override
-    public LikeDto findByPostId(Long postId) {
-        return null;
-    }
-
-    @Override
-    public LikeDto findByCommentId(Long commentId) {
-        return null;
-    }
-
-    @Override
-    public LikeDto findByUserId(Long userId) {
-        return null;
-    }
-
-    @Override
-    public LikeDto findById(Long id) {
-        return null;
-    }
-
-    @Override
-    public LikeDto update(LikeDto likeDto) {
-        return null;
-    }
 
     @Override
     public Boolean delete(Long id) {

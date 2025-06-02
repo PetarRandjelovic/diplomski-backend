@@ -50,8 +50,5 @@ public class Post {
     @ToString.Exclude
     private List<Tag> tags;
 
-//    @PrePersist
-//    protected void onCreate() {
-//        this.creationDate = Instant.now().toEpochMilli();
-//    }
+
 }

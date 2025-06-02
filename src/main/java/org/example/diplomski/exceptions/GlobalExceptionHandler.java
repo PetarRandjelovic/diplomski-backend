@@ -18,6 +18,18 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler({MediaNotFoundExceptin.class})
+    public ResponseEntity<ErrorResponse> handleMediaNotFoundExceptin(Exception ex, WebRequest request) {
+        ex.printStackTrace();
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({TagNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleTagNotFoundException(Exception ex, WebRequest request) {
+        ex.printStackTrace();
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
     @ExceptionHandler({PostNotFoundException.class})
     public ResponseEntity<ErrorResponse> handlePostNotFound(Exception ex, WebRequest request) {
         ex.printStackTrace();

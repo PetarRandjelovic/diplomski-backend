@@ -22,8 +22,10 @@ public class Media {
     private Post post;
 
     @Column(nullable = false)
-    private String url; // URL to the media (picture or video)
+    private String url;
 
     @Column(nullable = false)
-    private MediaType type; // Type of media (picture or video)
+    private MediaType type;
+
+    private String title;
 }

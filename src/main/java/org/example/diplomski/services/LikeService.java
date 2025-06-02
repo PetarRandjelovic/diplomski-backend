@@ -10,13 +10,6 @@ public interface LikeService {
 
     LikePostDto likePost(LikePostDto likePostDto);
     LikeCommentDto likeComment(LikeCommentDto likeCommentDto);
-    boolean isPostLikedByUser(Long postId, Long userId);
-    boolean isCommentLikedByUser(Long commentId, Long userId);
-    LikeDto findByPostId(Long postId);
-    LikeDto findByCommentId(Long commentId);
-    LikeDto findByUserId(Long userId);
-    LikeDto findById(Long id);
-    LikeDto update(LikeDto likeDto);
     Boolean delete(Long id);
     int getPostLikesCount(Long postId);
     int getCommentLikesCount(Long commentId);

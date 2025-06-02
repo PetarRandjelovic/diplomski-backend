@@ -56,6 +56,7 @@ public class PostController {
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
    // @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
     public ResponseEntity<?> createPost(@RequestBody PostDto postDto) {
+        System.out.println("test01");
         try {
             return ResponseEntity.ok(postService.createPost(postDto));
         } catch (Exception e) {

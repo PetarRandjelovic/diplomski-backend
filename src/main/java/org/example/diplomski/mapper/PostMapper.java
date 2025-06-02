@@ -1,10 +1,12 @@
 package org.example.diplomski.mapper;
 
+import org.example.diplomski.data.dto.MediaDto;
 import org.example.diplomski.data.dto.post.PostDto;
 import org.example.diplomski.data.dto.TagDto;
 import org.example.diplomski.data.dto.post.PostRecord;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
+import org.example.diplomski.repositories.PostRepository;
 import org.example.diplomski.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,11 +17,13 @@ import java.util.stream.Collectors;
 @Component
 public class PostMapper {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final MediaMapper mediaMapper;
 
-    @Autowired
-    public PostMapper(UserRepository userRepository) {
+
+    public PostMapper(UserRepository userRepository, MediaMapper mediaMapper) {
         this.userRepository = userRepository;
+        this.mediaMapper = mediaMapper;
     }
 
 
@@ -32,31 +36,28 @@ public class PostMapper {
                 .map(tag -> new TagDto(tag.getId(), tag.getName()))
                 .collect(Collectors.toList()));
         postDto.setCreationDate(post.getCreationDate());
+        postDto.setMedia(post.getMedia().stream().map(mediaMapper::mediaToMediaDto).toList());
 
         return postDto;
     }
 
     public Post postDtoToPost(PostDto postDto) {
         Post post = new Post();
-        post.setId(postDto.getId());
         post.setContent(postDto.getContent());
-        System.out.println(postDto.getUserEmail());
-        System.out.println(userRepository.findByEmail(postDto.getUserEmail()));
         post.setUser(userRepository.findByEmail(postDto.getUserEmail()).get());
-        List<Tag> tags = postDto.getTags().stream()
-                .map(tagDto -> new Tag(tagDto.getId(), tagDto.getName()))
-                .collect(Collectors.toList());
-        post.setTags(tags);
         post.setCreationDate(postDto.getCreationDate());
+       // post.setMedia(postDto.getMedia().stream().map(mediaMapper::mediaDtoToMedia).toList());
         return post;
     }
 
 
     public PostRecord postToPostRecord(Post post) {
 
+        List<MediaDto> list=post.getMedia().stream().map(mediaMapper::mediaToMediaDto).toList();
+
         return new PostRecord(post.getId(), post.getUser().getEmail(),post.getContent(),post.getTags().stream()
                 .map(tag -> new TagDto(tag.getId(), tag.getName())).toList()
-                ,post.getCreationDate(),post.getLikes().size());
+                ,post.getCreationDate(),post.getLikes().size(),list);
     }
 
 }
