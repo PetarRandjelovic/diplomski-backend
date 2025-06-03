@@ -56,23 +56,6 @@ public class User {
     @JsonManagedReference
     private UserProfile userProfile;
 
-//    @PrePersist
-//    public void prePersist() {
-//        if (this.userProfile == null) {
-//            UserProfile profile = new UserProfile();
-//            profile.setUser(this);
-//            this.setUserProfile(profile);
-//        }
-//    }
 
-//    private String city;
-//
-//    @ElementCollection
-//    private List<String> interests;
-//
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "image_id")
-//    private ImageData profileImage;
 
 }

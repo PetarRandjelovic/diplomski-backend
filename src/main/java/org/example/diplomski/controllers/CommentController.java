@@ -39,4 +39,13 @@ public class CommentController {
         return ResponseEntity.ok(commentService.createPostByPostId(id,userDetails.getUsername(),commentDto.getContent()));
 
     }
+
+    @DeleteMapping(path = "/delete/{id}", consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> createCommentByPostId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(commentService.delete(id));
+
+    }
+
+
 }

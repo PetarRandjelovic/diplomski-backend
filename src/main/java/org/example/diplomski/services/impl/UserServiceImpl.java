@@ -102,9 +102,9 @@ public class UserServiceImpl implements UserService {
         profile.setUser(user);
         profile.setCity("Unknown");
         profile.setInterests(new ArrayList<>());
-        profile.setProfilePictureUrl(imageDataRepository.findByName("avatar.png").orElseThrow(() -> new NotFoundException("User profile image not found")));
+        profile.setProfilePictureUrl(imageDataRepository.findById(1L).orElseThrow(() -> new NotFoundException("User profile image not found")));
 
-
+        user.setUserProfile(profile);
         User savedUser = userRepository.save(user);
 
         return userMapper.toDto(savedUser);

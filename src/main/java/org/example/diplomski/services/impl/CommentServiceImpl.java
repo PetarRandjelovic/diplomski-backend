@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
             return true;
         }
         if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
-            if (SpringSecurityUtil.getPrincipalEmail().equals(comment.getPost().getUser().getEmail())) {
+            if (SpringSecurityUtil.getPrincipalEmail().equals(comment.getUser().getEmail())) {
                 commentRepository.delete(comment);
                 return true;
             }

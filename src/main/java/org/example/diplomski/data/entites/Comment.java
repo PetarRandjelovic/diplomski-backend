@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
 
 @Entity
 @Table(name = "comments")
@@ -26,4 +29,9 @@ public class Comment {
 
     @Column(nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<LikeComment> likes;
+
 }
