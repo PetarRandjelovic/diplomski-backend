@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface PostService {
 
-    PostDto findById(Long id);
+    PostRecord findById(Long id);
     PostDto update(PostDto postDto);
     Boolean delete(Long id);
     PostDto save(PostDto postDto);
@@ -17,10 +17,10 @@ public interface PostService {
     List<PostRecord> findAll();
 
 
-    List<PostDto> findByEmail(String email);
+    List<PostRecord> findByEmail(String email);
 
     List<PostRecord> findByTag(List<String> tag);
 
 
-    List<PostDto> findByUserId(Long id);
+    List<PostRecord> findByUserId(Long id);
 }

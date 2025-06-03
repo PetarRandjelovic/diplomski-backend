@@ -38,9 +38,8 @@ public class PostController {
 
     @GetMapping(path = "/id/{id}", consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        PostDto postDto = postService.findById(id);
 
-        return ResponseEntity.ok(postDto);
+        return ResponseEntity.ok(postService.findById(id));
     }
 
     @GetMapping(path = "/email/{email}", consumes = MediaType.ALL_VALUE)

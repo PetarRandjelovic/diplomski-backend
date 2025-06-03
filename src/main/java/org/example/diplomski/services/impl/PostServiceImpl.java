@@ -50,12 +50,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostDto findById(Long id) {
+    public PostRecord findById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
         System.out.println(post.getMedia());
         PostDto postRecord=postMapper.postToPostDto(post);
         System.out.println(postRecord.getMedia());
-           return postMapper.postToPostDto(post);
+           return postMapper.postToPostRecord(post);
     }
 
     @Override
@@ -87,12 +87,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        System.out.println("brate");
         Post post = postMapper.postDtoToPost(postDto);
 
-        System.out.println("really");
-        //  if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
-        if (SpringSecurityUtil.getPrincipalEmail().equals(postDto.getUserEmail())) {
+
+         if (SpringSecurityUtil.getPrincipalEmail().equals(postDto.getUserEmail())) {
             List<Tag> tags = new ArrayList<>();
             for (TagDto tagDto : postDto.getTags()) {
                 System.out.println(tagDto.getName());
@@ -103,10 +101,7 @@ public class PostServiceImpl implements PostService {
 
             post.setCreationDate(Instant.now().toEpochMilli());
             post.setTags(tags);
-            System.out.println("test0");
             postRepository.save(post);
-            System.out.println("test00");
-            // Handle multiple media
             if (postDto.getMedia() != null && !postDto.getMedia().isEmpty()) {
                 List<Media> mediaList = new ArrayList<>();
 
@@ -116,16 +111,13 @@ public class PostServiceImpl implements PostService {
 
                     String originalUrl = mediaDto.getUrl();
 
-                    // Auto-detect media type from URL
                     MediaType detectedType = detectMediaType(originalUrl);
 
-                    // Convert URL if it's a video platform
                     String processedUrl = convertVideoUrl(originalUrl);
 
                     media.setUrl(processedUrl);
                     media.setType(detectedType);
                     media.setTitle(mediaDto.getTitle() != null ? mediaDto.getTitle() : "Media");
-                    // media.setDisplayOrder(mediaList.size()); // Set order
 
                     mediaList.add(media);
 
@@ -134,23 +126,19 @@ public class PostServiceImpl implements PostService {
                     System.out.println("Detected Type: " + detectedType);
                 }
 
-                // Save all media
                 mediaRepository.saveAll(mediaList);
                 post.setMedia(mediaList);
                 postRepository.save(post);
 
 
+            } else {
+                post.setMedia(new ArrayList<>());
             }
-            //   }
-
-
 
         }
-        System.out.println("test");
         return postMapper.postToPostDto(post);
     }
 
-    // Enhanced method to detect media type from URL
     private MediaType detectMediaType(String url) {
         String lowerUrl = url.toLowerCase();
 
@@ -234,14 +222,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> findByEmail(String email) {
+    public List<PostRecord> findByEmail(String email) {
 
         User user=userRepository.findByEmail(email).orElseThrow(() -> new UserEmailNotFoundException(email));
 
 
         List<Post> postList = postRepository.findAllByUserId(user.getId()).stream().toList();
 
-        return postList.stream().map(postMapper::postToPostDto).toList();
+        return postList.stream().map(postMapper::postToPostRecord).toList();
     }
 
     @Override
@@ -256,11 +244,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> findByUserId(Long id) {
+    public List<PostRecord> findByUserId(Long id) {
         User user=userRepository.findById(id).orElseThrow(() -> new UserIdNotFoundException(id.toString()));
 
         List<Post> postList = postRepository.findAllByUserId(user.getId()).stream().toList();
 
-        return postList.stream().map(postMapper::postToPostDto).toList();
+        return postList.stream().map(postMapper::postToPostRecord).toList();
     }
 }
