@@ -52,9 +52,9 @@ public class UserLoaderService {
                 byte[] compressedImage1 = img.getImageData();
 
                 String[][] users = {
-                        {"petar@gmail.com","petar@gmail.com","petar"},
-                        {"marko@gmail.com","marko@gmail.com","marko"},
-                        {"mirko@gmail.com","mirko@gmail.com","mirko"},
+                        {"petar@gmail.com","petar","petar"},
+                        {"marko@gmail.com","markoo","marko"},
+                        {"mirko@gmail.com","mirkov","mirko"},
                         {"ana.jovic@gmail.com", "ana_jovic", "ana123"},
                         {"nikola.petrovic@gmail.com", "nikola_petrovic", "nikola123"},
                         {"jelena.m@gmail.com", "jelena_m", "jelena123"},

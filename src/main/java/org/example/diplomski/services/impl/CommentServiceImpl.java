@@ -57,13 +57,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Boolean delete(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundException("Comment with id: " + id + " not found."));
-        
+
         if (SpringSecurityUtil.hasRoleRole("ROLE_ADMIN")) {
             commentRepository.delete(comment);
             return true;
         }
         if (SpringSecurityUtil.hasRoleRole("ROLE_USER") || SpringSecurityUtil.hasRoleRole("ROLE_PRIVATE") || SpringSecurityUtil.hasRoleRole("ROLE_PUBLIC")) {
             if (SpringSecurityUtil.getPrincipalEmail().equals(comment.getUser().getEmail())) {
+                commentRepository.delete(comment);
+                return true;
+            }
+            if (SpringSecurityUtil.getPrincipalEmail().equals(comment.getPost().getUser().getEmail())) {
                 commentRepository.delete(comment);
                 return true;
             }

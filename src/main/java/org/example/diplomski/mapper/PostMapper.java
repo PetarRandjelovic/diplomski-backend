@@ -30,7 +30,7 @@ public class PostMapper {
     public PostDto postToPostDto(Post post) {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());
-        postDto.setUserEmail(post.getUser().getEmail());
+        postDto.setUsername(post.getUser().getUsername());
         postDto.setContent(post.getContent());
         postDto.setTags(post.getTags().stream()
                 .map(tag -> new TagDto(tag.getId(), tag.getName()))
@@ -44,7 +44,7 @@ public class PostMapper {
     public Post postDtoToPost(PostDto postDto) {
         Post post = new Post();
         post.setContent(postDto.getContent());
-        post.setUser(userRepository.findByEmail(postDto.getUserEmail()).get());
+        post.setUser(userRepository.findByEmail(postDto.getUsername()).get());
         post.setCreationDate(postDto.getCreationDate());
        // post.setMedia(postDto.getMedia().stream().map(mediaMapper::mediaDtoToMedia).toList());
         return post;
@@ -55,7 +55,7 @@ public class PostMapper {
 
         List<MediaDto> list=post.getMedia().stream().map(mediaMapper::mediaToMediaDto).toList();
 
-        return new PostRecord(post.getId(), post.getUser().getEmail(),post.getContent(),post.getTags().stream()
+        return new PostRecord(post.getId(), post.getUser().getUsername(),post.getContent(),post.getTags().stream()
                 .map(tag -> new TagDto(tag.getId(), tag.getName())).toList()
                 ,post.getCreationDate(),post.getLikes().size(),list);
     }

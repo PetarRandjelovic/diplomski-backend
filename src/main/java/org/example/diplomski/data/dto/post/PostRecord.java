@@ -7,7 +7,7 @@ import java.util.List;
 
 public record PostRecord(
          Long id,
-         String userEmail,
+         String username,
          String content,
          List<TagDto>tags,
          Long creationDate,

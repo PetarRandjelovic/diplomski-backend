@@ -88,9 +88,9 @@ public class PostServiceImpl implements PostService {
     public PostDto createPost(PostDto postDto) {
 
         Post post = postMapper.postDtoToPost(postDto);
+        User user = userRepository.findByEmail(SpringSecurityUtil.getPrincipalEmail()).get();
 
-
-         if (SpringSecurityUtil.getPrincipalEmail().equals(postDto.getUserEmail())) {
+         if (SpringSecurityUtil.getPrincipalEmail().equals(user.getEmail())) {
             List<Tag> tags = new ArrayList<>();
             for (TagDto tagDto : postDto.getTags()) {
                 System.out.println(tagDto.getName());
@@ -218,6 +218,7 @@ public class PostServiceImpl implements PostService {
 
         List<Post> posts = postRepository.findAll();
 
+        System.out.println(posts.get(0));
         return posts.stream().map(postMapper::postToPostRecord).toList();
     }
 

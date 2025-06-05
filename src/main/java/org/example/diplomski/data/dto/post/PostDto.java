@@ -15,7 +15,7 @@ public class PostDto {
 
     private Long id;
 
-    private String userEmail;
+    private String username;
 
     private String content;
 
