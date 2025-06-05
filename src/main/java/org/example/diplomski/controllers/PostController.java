@@ -26,7 +26,7 @@ public class PostController {
 
 
     @DeleteMapping(path = "/delete/{id}", consumes = MediaType.ALL_VALUE)
-    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
+   // @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
     @Transactional
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
@@ -53,14 +53,9 @@ public class PostController {
     }
 
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-   // @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_USER','ROLE_PRIVATE','ROLE_PUBLIC')")
     public ResponseEntity<?> createPost(@RequestBody PostDto postDto) {
-        System.out.println("test01");
-        try {
             return ResponseEntity.ok(postService.createPost(postDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
+
     }
 
     @GetMapping(path = "/all", consumes = MediaType.ALL_VALUE)

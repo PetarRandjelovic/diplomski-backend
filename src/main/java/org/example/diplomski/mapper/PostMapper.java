@@ -6,6 +6,7 @@ import org.example.diplomski.data.dto.TagDto;
 import org.example.diplomski.data.dto.post.PostRecord;
 import org.example.diplomski.data.entites.Post;
 import org.example.diplomski.data.entites.Tag;
+import org.example.diplomski.exceptions.UserIdNotFoundException;
 import org.example.diplomski.repositories.PostRepository;
 import org.example.diplomski.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class PostMapper {
     public Post postDtoToPost(PostDto postDto) {
         Post post = new Post();
         post.setContent(postDto.getContent());
-        post.setUser(userRepository.findByEmail(postDto.getUsername()).get());
+        post.setUser(userRepository.findByUsername(postDto.getUsername()).orElseThrow(() -> new UserIdNotFoundException("User not found")));
         post.setCreationDate(postDto.getCreationDate());
        // post.setMedia(postDto.getMedia().stream().map(mediaMapper::mediaDtoToMedia).toList());
         return post;

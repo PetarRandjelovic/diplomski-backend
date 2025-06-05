@@ -87,21 +87,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        Post post = postMapper.postDtoToPost(postDto);
-        User user = userRepository.findByEmail(SpringSecurityUtil.getPrincipalEmail()).get();
 
-         if (SpringSecurityUtil.getPrincipalEmail().equals(user.getEmail())) {
+        Post post = postMapper.postDtoToPost(postDto);
             List<Tag> tags = new ArrayList<>();
+
             for (TagDto tagDto : postDto.getTags()) {
-                System.out.println(tagDto.getName());
                 Tag tag = tagRepository.findByName(tagDto.getName())
-                        .orElseThrow(()->new TagNotFoundException("Tag with "+tagDto.getName()+" is not found"));
+                        .orElseThrow(() -> new TagNotFoundException("Tag with " + tagDto.getName() + " is not found"));
                 tags.add(tag);
             }
 
             post.setCreationDate(Instant.now().toEpochMilli());
             post.setTags(tags);
             postRepository.save(post);
+                System.out.println("TEST");
             if (postDto.getMedia() != null && !postDto.getMedia().isEmpty()) {
                 List<Media> mediaList = new ArrayList<>();
 
@@ -125,7 +124,7 @@ public class PostServiceImpl implements PostService {
                     System.out.println("Processed URL: " + processedUrl);
                     System.out.println("Detected Type: " + detectedType);
                 }
-
+                System.out.println("DRUGI TEST");
                 mediaRepository.saveAll(mediaList);
                 post.setMedia(mediaList);
                 postRepository.save(post);
@@ -133,7 +132,7 @@ public class PostServiceImpl implements PostService {
 
             } else {
                 post.setMedia(new ArrayList<>());
-            }
+
 
         }
         return postMapper.postToPostDto(post);
