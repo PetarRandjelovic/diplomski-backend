@@ -96,52 +96,34 @@ public class PostServiceImpl implements PostService {
                         .orElseThrow(() -> new TagNotFoundException("Tag with " + tagDto.getName() + " is not found"));
                 tags.add(tag);
             }
-
             post.setCreationDate(Instant.now().toEpochMilli());
             post.setTags(tags);
             postRepository.save(post);
                 System.out.println("TEST");
             if (postDto.getMedia() != null && !postDto.getMedia().isEmpty()) {
                 List<Media> mediaList = new ArrayList<>();
-
                 for (MediaDto mediaDto : postDto.getMedia()) {
                     Media media = new Media();
                     media.setPost(post);
-
                     String originalUrl = mediaDto.getUrl();
-
                     MediaType detectedType = detectMediaType(originalUrl);
-
                     String processedUrl = convertVideoUrl(originalUrl);
-
                     media.setUrl(processedUrl);
                     media.setType(detectedType);
                     media.setTitle(mediaDto.getTitle() != null ? mediaDto.getTitle() : "Media");
-
                     mediaList.add(media);
-
-                    System.out.println("Original URL: " + originalUrl);
-                    System.out.println("Processed URL: " + processedUrl);
-                    System.out.println("Detected Type: " + detectedType);
                 }
-                System.out.println("DRUGI TEST");
                 mediaRepository.saveAll(mediaList);
                 post.setMedia(mediaList);
                 postRepository.save(post);
-
-
             } else {
                 post.setMedia(new ArrayList<>());
-
-
         }
         return postMapper.postToPostDto(post);
     }
 
     private MediaType detectMediaType(String url) {
         String lowerUrl = url.toLowerCase();
-
-        // Video platforms
         if (lowerUrl.contains("youtube.com") || lowerUrl.contains("youtu.be")) {
             return MediaType.VIDEO;
         }
@@ -155,7 +137,6 @@ public class PostServiceImpl implements PostService {
             return MediaType.VIDEO;
         }
 
-        // Direct video file extensions
         if (lowerUrl.endsWith(".mp4") || lowerUrl.endsWith(".webm") ||
                 lowerUrl.endsWith(".avi") || lowerUrl.endsWith(".mov") ||
                 lowerUrl.endsWith(".wmv") || lowerUrl.endsWith(".flv") ||
@@ -163,7 +144,6 @@ public class PostServiceImpl implements PostService {
             return MediaType.VIDEO;
         }
 
-        // Image file extensions
         if (lowerUrl.endsWith(".jpg") || lowerUrl.endsWith(".jpeg") ||
                 lowerUrl.endsWith(".png") || lowerUrl.endsWith(".gif") ||
                 lowerUrl.endsWith(".bmp") || lowerUrl.endsWith(".webp") ||
@@ -171,21 +151,15 @@ public class PostServiceImpl implements PostService {
             return MediaType.IMAGE;
         }
 
-        // Image hosting platforms
         if (lowerUrl.contains("imgur.com") || lowerUrl.contains("flickr.com") ||
                 lowerUrl.contains("instagram.com") || lowerUrl.contains("pinterest.com")) {
             return MediaType.IMAGE;
         }
 
-        // Default to image if uncertain
         return MediaType.IMAGE;
     }
-
-    // Enhanced method to convert video URLs
     private String convertVideoUrl(String url) {
         String lowerUrl = url.toLowerCase();
-
-        // YouTube conversions
         if (lowerUrl.contains("youtube.com/watch?v=")) {
             String videoId = url.split("v=")[1].split("&")[0];
             return "https://www.youtube.com/embed/" + videoId;
@@ -194,20 +168,14 @@ public class PostServiceImpl implements PostService {
             String videoId = url.substring(url.lastIndexOf("/") + 1).split("\\?")[0];
             return "https://www.youtube.com/embed/" + videoId;
         }
-
-        // Vimeo conversions
         if (lowerUrl.contains("vimeo.com/")) {
             String videoId = url.substring(url.lastIndexOf("/") + 1).split("\\?")[0];
             return "https://player.vimeo.com/video/" + videoId;
         }
-
-        // Dailymotion conversions
         if (lowerUrl.contains("dailymotion.com/video/")) {
             String videoId = url.substring(url.indexOf("/video/") + 7).split("\\?")[0];
             return "https://www.dailymotion.com/embed/video/" + videoId;
         }
-
-        // Return original URL for direct files and images
         return url;
     }
 

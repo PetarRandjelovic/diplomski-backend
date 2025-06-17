@@ -27,9 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -160,30 +158,30 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // Get all current friends' emails
         Set<String> currentFriendEmails = userRelationshipRepository.findFriendEmails(email);
-
-        // Add self to exclusion list
         currentFriendEmails.add(email);
 
-        // Get the user's profile for city & interests
-        UserProfile userProfile = user.getUserProfile();
-        String city = userProfile.getCity();
-        List<String> interests = userProfile.getInterests();
-
-        // Fetch all users not already friends
         List<User> potentialUsers = userRepository.findAllExcludingEmails(currentFriendEmails);
-
-        // Score users based on similarity
+        Map<String, Set<String>> potentialUserFriendsMap = potentialUsers.stream()
+                .collect(Collectors.toMap(
+                        User::getEmail,
+                        u -> userRelationshipRepository.findFriendEmails(u.getEmail())
+                ));
         return potentialUsers.stream()
                 .sorted((u1, u2) -> {
-                    int score1 = calculateScore(userProfile, u1.getUserProfile());
-                    int score2 = calculateScore(userProfile, u2.getUserProfile());
-                    return Integer.compare(score2, score1); // sort descending
+                    int common1 = countCommonFriends(currentFriendEmails, potentialUserFriendsMap.get(u1.getEmail()));
+                    int common2 = countCommonFriends(currentFriendEmails, potentialUserFriendsMap.get(u2.getEmail()));
+                    return Integer.compare(common2, common1);
                 })
                 .limit(10)
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private int countCommonFriends(Set<String> currentUserFriends, Set<String> otherUserFriends) {
+        Set<String> intersection = new HashSet<>(currentUserFriends);
+        intersection.retainAll(otherUserFriends);
+        return intersection.size();
     }
 
     @Override

@@ -38,7 +38,6 @@ public class ChatService {
     }
 
     public void saveAndSend(ChatMessageDTO messageDTO) {
-        // Save to DB
         ChatMessage message = new ChatMessage();
         message.setSenderId(messageDTO.senderId());
         message.setReceiverId(messageDTO.receiverId());

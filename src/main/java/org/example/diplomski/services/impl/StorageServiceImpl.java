@@ -61,7 +61,6 @@ public class StorageServiceImpl implements StorageService {
     @Transactional
     @Override
     public byte[] downloadImage(String fileName){
-      //  Optional<ImageData> dbImageData = repository.findByName(fileName);
         Optional<ImageData> dbImageData = repository.findById(1L);
         byte[] images=ImageUtils.decompressImage(dbImageData.get().getImageData());
         return images;
@@ -77,30 +76,19 @@ public class StorageServiceImpl implements StorageService {
         UserProfile userProfile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("UserProfile for user ID " + userId + " not found."));
 
-        // Save new image
         ImageData imageData = repository.save(ImageData.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(file.getBytes()))
                 .build());
 
-//        ImageData userImg = imageDataRepository.save(ImageData.builder()
-//                .name("avatar.png")
-//                .type("image/png")
-//                .imageData(imageData.getImageData())
-//                .build());
-
-        // Remove old image safely
         ImageData oldImage = userProfile.getProfilePictureUrl();
 
-
-        // 2. Delete old image (now it's not referenced)
         if (oldImage != null) {
             profileService.detachProfilePicture(userProfile.getId());
             deleteImageService.deleteImageById(oldImage.getId());
         }
 
-        // 3. Set new image
         userProfile.setProfilePictureUrl(imageData);
         userProfileRepository.save(userProfile);
 
